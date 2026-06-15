@@ -11,7 +11,8 @@ UNITY_DIR = ../unity
 
 OBJS = \
 	$(SRC_DIR)/main.o \
-	$(SRC_DIR)/argumentos.o
+	$(SRC_DIR)/argumentos.o \
+	$(SRC_DIR)/lista.o
 
 all: $(PROJ_NAME)
 
@@ -25,11 +26,15 @@ t_argumentos: $(SRC_DIR)/argumentos.o $(TST_DIR)/t_argumentos.c $(UNITY_DIR)/uni
 	$(CC) $(CPPFLAGS) $(CFLAGS) $^ -o $(TST_DIR)/t_argumentos_run
 	$(TST_DIR)/t_argumentos_run
 
-tstall: t_argumentos
+t_lista: $(SRC_DIR)/lista.o $(TST_DIR)/t_lista.c $(UNITY_DIR)/unity.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) $^ -o $(TST_DIR)/t_lista_run
+	$(TST_DIR)/t_lista_run
+
+tstall: t_argumentos t_lista
 
 clean:
 	rm -f $(SRC_DIR)/*.o
 	rm -f $(PROJ_NAME)
 	rm -f $(TST_DIR)/*_run
 
-.PHONY: all clean tstall t_argumentos
+.PHONY: all clean tstall t_argumentos t_lista
