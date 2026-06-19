@@ -13,7 +13,8 @@ OBJS = \
 	$(SRC_DIR)/main.o \
 	$(SRC_DIR)/argumentos.o \
 	$(SRC_DIR)/lista.o \
-	$(SRC_DIR)/quadra.o
+	$(SRC_DIR)/quadra.o \
+	$(SRC_DIR)/cidade.o
 
 all: $(PROJ_NAME)
 
@@ -35,11 +36,15 @@ t_quadra: $(SRC_DIR)/quadra.o $(TST_DIR)/t_quadra.c $(UNITY_DIR)/unity.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) $^ -o $(TST_DIR)/t_quadra_run
 	$(TST_DIR)/t_quadra_run
 
-tstall: t_argumentos t_lista t_quadra
+t_cidade: $(SRC_DIR)/cidade.o $(SRC_DIR)/lista.o $(SRC_DIR)/quadra.o $(TST_DIR)/t_cidade.c $(UNITY_DIR)/unity.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) $^ -o $(TST_DIR)/t_cidade_run
+	$(TST_DIR)/t_cidade_run
+
+tstall: t_argumentos t_lista t_quadra t_cidade
 
 clean:
 	rm -f $(SRC_DIR)/*.o
 	rm -f $(PROJ_NAME)
 	rm -f $(TST_DIR)/*_run
 
-.PHONY: all clean tstall t_argumentos t_lista t_quadra
+.PHONY: all clean tstall t_argumentos t_lista t_quadra t_cidade
