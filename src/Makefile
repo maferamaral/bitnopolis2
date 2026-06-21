@@ -17,7 +17,8 @@ OBJS = \
 	$(SRC_DIR)/cidade.o \
 	$(SRC_DIR)/geo.o \
 	$(SRC_DIR)/grafo.o \
-	$(SRC_DIR)/via.o
+	$(SRC_DIR)/via.o \
+	$(SRC_DIR)/registrador.o
 
 all: $(PROJ_NAME)
 
@@ -55,11 +56,15 @@ t_via: $(SRC_DIR)/via.o $(SRC_DIR)/grafo.o $(SRC_DIR)/lista.o $(TST_DIR)/t_via.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) $^ -o $(TST_DIR)/t_via_run
 	$(TST_DIR)/t_via_run
 
-tstall: t_argumentos t_lista t_quadra t_cidade t_geo t_grafo t_via
+t_registrador: $(SRC_DIR)/registrador.o $(SRC_DIR)/quadra.o $(TST_DIR)/t_registrador.c $(UNITY_DIR)/unity.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) $^ -o $(TST_DIR)/t_registrador_run
+	$(TST_DIR)/t_registrador_run
+
+tstall: t_argumentos t_lista t_quadra t_cidade t_geo t_grafo t_via t_registrador
 
 clean:
 	rm -f $(SRC_DIR)/*.o
 	rm -f $(PROJ_NAME)
 	rm -f $(TST_DIR)/*_run
 
-.PHONY: all clean tstall t_argumentos t_lista t_quadra t_cidade t_geo t_grafo t_via
+.PHONY: all clean tstall t_argumentos t_lista t_quadra t_cidade t_geo t_grafo t_via t_registrador
