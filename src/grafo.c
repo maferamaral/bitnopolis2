@@ -250,6 +250,34 @@ VerticeGrafo buscar_vertice_grafo(Grafo grafo_generico, const char *id)
     return NULL;
 }
 
+VerticeGrafo buscar_vertice_mais_proximo_grafo(Grafo grafo_generico, double x, double y)
+{
+    struct grafo *grafo = grafo_generico;
+    struct vertice_grafo *mais_proximo = NULL;
+    double menor_distancia = 0.0;
+    int i;
+    int quantidade;
+
+    if (grafo == NULL) {
+        return NULL;
+    }
+
+    quantidade = obter_tamanho_lista(grafo->vertices);
+    for (i = 0; i < quantidade; i++) {
+        struct vertice_grafo *vertice = obter_item_lista(grafo->vertices, i);
+        double dx = vertice->x - x;
+        double dy = vertice->y - y;
+        double distancia = dx * dx + dy * dy;
+
+        if (mais_proximo == NULL || distancia < menor_distancia) {
+            mais_proximo = vertice;
+            menor_distancia = distancia;
+        }
+    }
+
+    return mais_proximo;
+}
+
 VerticeGrafo obter_vertice_grafo(Grafo grafo_generico, int indice)
 {
     struct grafo *grafo = grafo_generico;

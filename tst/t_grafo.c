@@ -86,6 +86,22 @@ void test_deve_rejeitar_aresta_com_vertices_inexistentes(void)
     destruir_grafo(grafo);
 }
 
+void test_deve_buscar_vertice_mais_proximo(void)
+{
+    Grafo grafo = criar_grafo();
+
+    TEST_ASSERT_NOT_NULL(grafo);
+    TEST_ASSERT_EQUAL_INT(1, inserir_vertice_grafo(grafo, "v1", 0.0, 0.0));
+    TEST_ASSERT_EQUAL_INT(1, inserir_vertice_grafo(grafo, "v2", 100.0, 100.0));
+    TEST_ASSERT_EQUAL_INT(1, inserir_vertice_grafo(grafo, "v3", 20.0, 10.0));
+
+    TEST_ASSERT_EQUAL_STRING("v3", obter_id_vertice_grafo(buscar_vertice_mais_proximo_grafo(grafo, 18.0, 12.0)));
+    TEST_ASSERT_EQUAL_STRING("v2", obter_id_vertice_grafo(buscar_vertice_mais_proximo_grafo(grafo, 90.0, 95.0)));
+    TEST_ASSERT_NULL(buscar_vertice_mais_proximo_grafo(NULL, 0.0, 0.0));
+
+    destruir_grafo(grafo);
+}
+
 void test_deve_retornar_valores_neutros_para_entradas_nulas(void)
 {
     TEST_ASSERT_EQUAL_INT(0, inserir_vertice_grafo(NULL, "v1", 10.0, 20.0));
@@ -109,6 +125,7 @@ int main(void)
     RUN_TEST(test_deve_inserir_e_buscar_vertices);
     RUN_TEST(test_deve_inserir_aresta_direcionada);
     RUN_TEST(test_deve_rejeitar_aresta_com_vertices_inexistentes);
+    RUN_TEST(test_deve_buscar_vertice_mais_proximo);
     RUN_TEST(test_deve_retornar_valores_neutros_para_entradas_nulas);
     return UNITY_END();
 }

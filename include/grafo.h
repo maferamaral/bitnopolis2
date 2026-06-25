@@ -21,6 +21,7 @@ int inserir_aresta_grafo(
 );
 
 VerticeGrafo buscar_vertice_grafo(Grafo grafo, const char *id);
+VerticeGrafo buscar_vertice_mais_proximo_grafo(Grafo grafo, double x, double y);
 VerticeGrafo obter_vertice_grafo(Grafo grafo, int indice);
 ArestaGrafo obter_aresta_vertice_grafo(VerticeGrafo vertice, int indice);
 
