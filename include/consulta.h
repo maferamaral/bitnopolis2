@@ -1,0 +1,9 @@
+#ifndef CONSULTA_H
+#define CONSULTA_H
+
+#include "cidade.h"
+#include "grafo.h"
+
+int processar_arquivo_consulta(const char *caminho_qry, Cidade cidade, Grafo grafo, const char *caminho_txt);
+
+#endif
