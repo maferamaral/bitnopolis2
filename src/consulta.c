@@ -128,6 +128,32 @@ static int processar_comando_percurso(const char *linha, Grafo grafo, Registrado
     return sucesso;
 }
 
+static int processar_comando_mvm(const char *linha, Grafo grafo, FILE *saida)
+{
+    double velocidade_media;
+    double x;
+    double y;
+    double largura;
+    double altura;
+    int alteradas;
+
+    if (sscanf(linha, "mvm %lf %lf %lf %lf %lf", &velocidade_media, &x, &y, &largura, &altura) != 5) {
+        return 1;
+    }
+
+    alteradas = atualizar_velocidade_arestas_regiao_grafo(grafo, x, y, largura, altura, velocidade_media);
+    return fprintf(
+        saida,
+        "mvm %.2f %.2f %.2f %.2f %.2f -> %d aresta(s) atualizada(s)\n",
+        velocidade_media,
+        x,
+        y,
+        largura,
+        altura,
+        alteradas
+    ) >= 0;
+}
+
 int processar_arquivo_consulta(const char *caminho_qry, Cidade cidade, Grafo grafo, const char *caminho_txt)
 {
     FILE *consulta;
@@ -163,6 +189,8 @@ int processar_arquivo_consulta(const char *caminho_qry, Cidade cidade, Grafo gra
             sucesso = processar_comando_origem(linha, cidade, registradores, saida);
         } else if (linha[0] == 'p' && linha[1] == '?') {
             sucesso = processar_comando_percurso(linha, grafo, registradores, saida);
+        } else if (linha[0] == 'm' && linha[1] == 'v' && linha[2] == 'm') {
+            sucesso = processar_comando_mvm(linha, grafo, saida);
         }
     }
 

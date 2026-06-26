@@ -28,6 +28,7 @@ ArestaGrafo obter_aresta_vertice_grafo(VerticeGrafo vertice, int indice);
 int obter_quantidade_vertices_grafo(Grafo grafo);
 int obter_quantidade_arestas_grafo(Grafo grafo);
 int obter_grau_saida_vertice_grafo(VerticeGrafo vertice);
+int atualizar_velocidade_arestas_regiao_grafo(Grafo grafo, double x, double y, double largura, double altura, double velocidade_media);
 
 const char *obter_id_vertice_grafo(VerticeGrafo vertice);
 double obter_x_vertice_grafo(VerticeGrafo vertice);

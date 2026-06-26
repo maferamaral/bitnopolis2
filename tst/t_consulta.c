@@ -119,6 +119,26 @@ void test_deve_informar_destino_inacessivel_quando_percurso_nao_existir(void)
     destruir_cidade(cidade);
 }
 
+void test_deve_processar_mvm_e_alterar_velocidades(void)
+{
+    Cidade cidade = criar_cidade_consulta();
+    Grafo grafo = criar_grafo_consulta();
+    VerticeGrafo origem;
+    ArestaGrafo aresta;
+
+    escrever_qry("mvm 9 0 0 15 5\n");
+
+    TEST_ASSERT_EQUAL_INT(1, processar_arquivo_consulta(CAMINHO_QRY_TESTE, cidade, grafo, CAMINHO_TXT_TESTE));
+    TEST_ASSERT_EQUAL_INT(1, arquivo_txt_contem("mvm 9.00 0.00 0.00 15.00 5.00 -> 1 aresta(s) atualizada(s)"));
+
+    origem = buscar_vertice_grafo(grafo, "A");
+    aresta = obter_aresta_vertice_grafo(origem, 0);
+    TEST_ASSERT_FLOAT_WITHIN(0.0001, 9.0, obter_velocidade_aresta_grafo(aresta));
+
+    destruir_grafo(grafo);
+    destruir_cidade(cidade);
+}
+
 void test_deve_rejeitar_entradas_invalidas_consulta(void)
 {
     Cidade cidade = criar_cidade_consulta();
@@ -140,6 +160,7 @@ int main(void)
     UNITY_BEGIN();
     RUN_TEST(test_deve_processar_origem_geografica_e_percurso);
     RUN_TEST(test_deve_informar_destino_inacessivel_quando_percurso_nao_existir);
+    RUN_TEST(test_deve_processar_mvm_e_alterar_velocidades);
     RUN_TEST(test_deve_rejeitar_entradas_invalidas_consulta);
     return UNITY_END();
 }

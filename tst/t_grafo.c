@@ -102,6 +102,37 @@ void test_deve_buscar_vertice_mais_proximo(void)
     destruir_grafo(grafo);
 }
 
+void test_deve_atualizar_velocidade_das_arestas_em_regiao(void)
+{
+    Grafo grafo = criar_grafo();
+    VerticeGrafo v1;
+    VerticeGrafo v2;
+    VerticeGrafo v3;
+    ArestaGrafo dentro;
+    ArestaGrafo fora;
+
+    TEST_ASSERT_NOT_NULL(grafo);
+    TEST_ASSERT_EQUAL_INT(1, inserir_vertice_grafo(grafo, "v1", 10.0, 10.0));
+    TEST_ASSERT_EQUAL_INT(1, inserir_vertice_grafo(grafo, "v2", 20.0, 20.0));
+    TEST_ASSERT_EQUAL_INT(1, inserir_vertice_grafo(grafo, "v3", 100.0, 100.0));
+    TEST_ASSERT_EQUAL_INT(1, inserir_aresta_grafo(grafo, "v1", "v2", "-", "-", 10.0, 5.0, "Rua_Dentro"));
+    TEST_ASSERT_EQUAL_INT(1, inserir_aresta_grafo(grafo, "v2", "v3", "-", "-", 10.0, 5.0, "Rua_Fora"));
+
+    TEST_ASSERT_EQUAL_INT(1, atualizar_velocidade_arestas_regiao_grafo(grafo, 0.0, 0.0, 30.0, 30.0, 12.0));
+
+    v1 = buscar_vertice_grafo(grafo, "v1");
+    v2 = buscar_vertice_grafo(grafo, "v2");
+    v3 = buscar_vertice_grafo(grafo, "v3");
+    dentro = obter_aresta_vertice_grafo(v1, 0);
+    fora = obter_aresta_vertice_grafo(v2, 0);
+
+    TEST_ASSERT_NOT_NULL(v3);
+    TEST_ASSERT_FLOAT_WITHIN(0.0001, 12.0, obter_velocidade_aresta_grafo(dentro));
+    TEST_ASSERT_FLOAT_WITHIN(0.0001, 5.0, obter_velocidade_aresta_grafo(fora));
+
+    destruir_grafo(grafo);
+}
+
 void test_deve_retornar_valores_neutros_para_entradas_nulas(void)
 {
     TEST_ASSERT_EQUAL_INT(0, inserir_vertice_grafo(NULL, "v1", 10.0, 20.0));
@@ -112,6 +143,7 @@ void test_deve_retornar_valores_neutros_para_entradas_nulas(void)
     TEST_ASSERT_EQUAL_INT(0, obter_quantidade_vertices_grafo(NULL));
     TEST_ASSERT_EQUAL_INT(0, obter_quantidade_arestas_grafo(NULL));
     TEST_ASSERT_EQUAL_INT(0, obter_grau_saida_vertice_grafo(NULL));
+    TEST_ASSERT_EQUAL_INT(0, atualizar_velocidade_arestas_regiao_grafo(NULL, 0.0, 0.0, 10.0, 10.0, 5.0));
     TEST_ASSERT_NULL(obter_id_vertice_grafo(NULL));
     TEST_ASSERT_NULL(obter_origem_aresta_grafo(NULL));
     TEST_ASSERT_NULL(obter_destino_aresta_grafo(NULL));
@@ -126,6 +158,7 @@ int main(void)
     RUN_TEST(test_deve_inserir_aresta_direcionada);
     RUN_TEST(test_deve_rejeitar_aresta_com_vertices_inexistentes);
     RUN_TEST(test_deve_buscar_vertice_mais_proximo);
+    RUN_TEST(test_deve_atualizar_velocidade_das_arestas_em_regiao);
     RUN_TEST(test_deve_retornar_valores_neutros_para_entradas_nulas);
     return UNITY_END();
 }

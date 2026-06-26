@@ -333,6 +333,53 @@ int obter_grau_saida_vertice_grafo(VerticeGrafo vertice_generico)
     return obter_tamanho_lista(vertice->arestas_saida);
 }
 
+static int vertice_esta_na_regiao(struct vertice_grafo *vertice, double x, double y, double largura, double altura)
+{
+    return vertice != NULL &&
+           vertice->x >= x &&
+           vertice->x <= x + largura &&
+           vertice->y >= y &&
+           vertice->y <= y + altura;
+}
+
+int atualizar_velocidade_arestas_regiao_grafo(
+    Grafo grafo_generico,
+    double x,
+    double y,
+    double largura,
+    double altura,
+    double velocidade_media
+)
+{
+    struct grafo *grafo = grafo_generico;
+    int i;
+    int alteradas = 0;
+    int quantidade_vertices;
+
+    if (grafo == NULL || largura < 0.0 || altura < 0.0 || velocidade_media < 0.0) {
+        return 0;
+    }
+
+    quantidade_vertices = obter_tamanho_lista(grafo->vertices);
+    for (i = 0; i < quantidade_vertices; i++) {
+        struct vertice_grafo *origem = obter_item_lista(grafo->vertices, i);
+        int j;
+        int grau_saida = obter_tamanho_lista(origem->arestas_saida);
+
+        for (j = 0; j < grau_saida; j++) {
+            struct aresta_grafo *aresta = obter_item_lista(origem->arestas_saida, j);
+
+            if (vertice_esta_na_regiao(aresta->origem, x, y, largura, altura) &&
+                vertice_esta_na_regiao(aresta->destino, x, y, largura, altura)) {
+                aresta->velocidade_media = velocidade_media;
+                alteradas++;
+            }
+        }
+    }
+
+    return alteradas;
+}
+
 const char *obter_id_vertice_grafo(VerticeGrafo vertice_generico)
 {
     struct vertice_grafo *vertice = vertice_generico;
