@@ -139,6 +139,20 @@ void test_deve_processar_mvm_e_alterar_velocidades(void)
     destruir_cidade(cidade);
 }
 
+void test_deve_processar_regs_e_informar_componentes(void)
+{
+    Cidade cidade = criar_cidade_consulta();
+    Grafo grafo = criar_grafo_consulta();
+
+    escrever_qry("regs 5\n");
+
+    TEST_ASSERT_EQUAL_INT(1, processar_arquivo_consulta(CAMINHO_QRY_TESTE, cidade, grafo, CAMINHO_TXT_TESTE));
+    TEST_ASSERT_EQUAL_INT(1, arquivo_txt_contem("regs 5.00 -> Numero de componentes conexos: 1"));
+
+    destruir_grafo(grafo);
+    destruir_cidade(cidade);
+}
+
 void test_deve_rejeitar_entradas_invalidas_consulta(void)
 {
     Cidade cidade = criar_cidade_consulta();
@@ -161,6 +175,7 @@ int main(void)
     RUN_TEST(test_deve_processar_origem_geografica_e_percurso);
     RUN_TEST(test_deve_informar_destino_inacessivel_quando_percurso_nao_existir);
     RUN_TEST(test_deve_processar_mvm_e_alterar_velocidades);
+    RUN_TEST(test_deve_processar_regs_e_informar_componentes);
     RUN_TEST(test_deve_rejeitar_entradas_invalidas_consulta);
     return UNITY_END();
 }
