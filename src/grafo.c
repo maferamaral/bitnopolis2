@@ -479,6 +479,18 @@ double obter_velocidade_aresta_grafo(ArestaGrafo aresta_generica)
     return aresta->velocidade_media;
 }
 
+int definir_velocidade_aresta_grafo(ArestaGrafo aresta_generica, double velocidade_media)
+{
+    struct aresta_grafo *aresta = aresta_generica;
+
+    if (aresta == NULL || velocidade_media < 0.0) {
+        return 0;
+    }
+
+    aresta->velocidade_media = velocidade_media;
+    return 1;
+}
+
 const char *obter_nome_aresta_grafo(ArestaGrafo aresta_generica)
 {
     struct aresta_grafo *aresta = aresta_generica;

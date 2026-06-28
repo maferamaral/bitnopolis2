@@ -40,6 +40,7 @@ const char *obter_cep_direita_aresta_grafo(ArestaGrafo aresta);
 const char *obter_cep_esquerda_aresta_grafo(ArestaGrafo aresta);
 double obter_comprimento_aresta_grafo(ArestaGrafo aresta);
 double obter_velocidade_aresta_grafo(ArestaGrafo aresta);
+int definir_velocidade_aresta_grafo(ArestaGrafo aresta, double velocidade_media);
 const char *obter_nome_aresta_grafo(ArestaGrafo aresta);
 
 #endif

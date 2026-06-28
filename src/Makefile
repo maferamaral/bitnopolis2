@@ -25,7 +25,8 @@ OBJS = \
 	$(SRC_DIR)/dijkstra.o \
 	$(SRC_DIR)/percurso.o \
 	$(SRC_DIR)/consulta.o \
-	$(SRC_DIR)/componentes.o
+	$(SRC_DIR)/componentes.o \
+	$(SRC_DIR)/arvore_minima.o
 
 all: $(PROJ_NAME)
 
@@ -91,15 +92,19 @@ t_componentes: $(SRC_DIR)/componentes.o $(SRC_DIR)/grafo.o $(SRC_DIR)/lista.o $(
 	$(CC) $(CPPFLAGS) $(CFLAGS) $^ -o $(TST_DIR)/t_componentes_run
 	$(TST_DIR)/t_componentes_run
 
-t_consulta: $(SRC_DIR)/consulta.o $(SRC_DIR)/componentes.o $(SRC_DIR)/percurso.o $(SRC_DIR)/dijkstra.o $(SRC_DIR)/fila_prioridade.o $(SRC_DIR)/grafo.o $(SRC_DIR)/lista.o $(SRC_DIR)/registrador.o $(SRC_DIR)/quadra.o $(SRC_DIR)/cidade.o $(TST_DIR)/t_consulta.c $(UNITY_DIR)/unity.c
+t_arvore_minima: $(SRC_DIR)/arvore_minima.o $(SRC_DIR)/grafo.o $(SRC_DIR)/lista.o $(TST_DIR)/t_arvore_minima.c $(UNITY_DIR)/unity.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) $^ -o $(TST_DIR)/t_arvore_minima_run
+	$(TST_DIR)/t_arvore_minima_run
+
+t_consulta: $(SRC_DIR)/consulta.o $(SRC_DIR)/arvore_minima.o $(SRC_DIR)/componentes.o $(SRC_DIR)/percurso.o $(SRC_DIR)/dijkstra.o $(SRC_DIR)/fila_prioridade.o $(SRC_DIR)/grafo.o $(SRC_DIR)/lista.o $(SRC_DIR)/registrador.o $(SRC_DIR)/quadra.o $(SRC_DIR)/cidade.o $(TST_DIR)/t_consulta.c $(UNITY_DIR)/unity.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) $^ -o $(TST_DIR)/t_consulta_run
 	$(TST_DIR)/t_consulta_run
 
-tstall: t_argumentos t_lista t_quadra t_cidade t_geo t_grafo t_via t_registrador t_saida_texto t_saida_svg t_fila_prioridade t_dijkstra t_percurso t_componentes t_consulta
+tstall: t_argumentos t_lista t_quadra t_cidade t_geo t_grafo t_via t_registrador t_saida_texto t_saida_svg t_fila_prioridade t_dijkstra t_percurso t_componentes t_arvore_minima t_consulta
 
 clean:
 	rm -f $(SRC_DIR)/*.o
 	rm -f $(PROJ_NAME)
 	rm -f $(TST_DIR)/*_run
 
-.PHONY: all clean tstall t_argumentos t_lista t_quadra t_cidade t_geo t_grafo t_via t_registrador t_saida_texto t_saida_svg t_fila_prioridade t_dijkstra t_percurso t_componentes t_consulta
+.PHONY: all clean tstall t_argumentos t_lista t_quadra t_cidade t_geo t_grafo t_via t_registrador t_saida_texto t_saida_svg t_fila_prioridade t_dijkstra t_percurso t_componentes t_arvore_minima t_consulta

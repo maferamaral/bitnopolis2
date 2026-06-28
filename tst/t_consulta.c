@@ -153,6 +153,23 @@ void test_deve_processar_regs_e_informar_componentes(void)
     destruir_cidade(cidade);
 }
 
+void test_deve_processar_exp_e_expandir_arestas(void)
+{
+    Cidade cidade = criar_cidade_consulta();
+    Grafo grafo = criar_grafo_consulta();
+    VerticeGrafo origem = buscar_vertice_grafo(grafo, "A");
+    ArestaGrafo aresta = obter_aresta_vertice_grafo(origem, 0);
+
+    escrever_qry("exp 5\n");
+
+    TEST_ASSERT_EQUAL_INT(1, processar_arquivo_consulta(CAMINHO_QRY_TESTE, cidade, grafo, CAMINHO_TXT_TESTE));
+    TEST_ASSERT_EQUAL_INT(1, arquivo_txt_contem("exp 5.00 -> 2 aresta(s) expandida(s)"));
+    TEST_ASSERT_FLOAT_WITHIN(0.0001, 1.5, obter_velocidade_aresta_grafo(aresta));
+
+    destruir_grafo(grafo);
+    destruir_cidade(cidade);
+}
+
 void test_deve_rejeitar_entradas_invalidas_consulta(void)
 {
     Cidade cidade = criar_cidade_consulta();
@@ -176,6 +193,7 @@ int main(void)
     RUN_TEST(test_deve_informar_destino_inacessivel_quando_percurso_nao_existir);
     RUN_TEST(test_deve_processar_mvm_e_alterar_velocidades);
     RUN_TEST(test_deve_processar_regs_e_informar_componentes);
+    RUN_TEST(test_deve_processar_exp_e_expandir_arestas);
     RUN_TEST(test_deve_rejeitar_entradas_invalidas_consulta);
     return UNITY_END();
 }

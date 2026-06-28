@@ -1,5 +1,6 @@
 #include "consulta.h"
 
+#include "arvore_minima.h"
 #include "componentes.h"
 #include "dijkstra.h"
 #include "percurso.h"
@@ -176,6 +177,19 @@ static int processar_comando_regs(const char *linha, Grafo grafo, FILE *saida)
     return fprintf(saida, "regs %.2f -> Numero de componentes conexos: %d\n", limite_velocidade, quantidade) >= 0;
 }
 
+static int processar_comando_exp(const char *linha, Grafo grafo, FILE *saida)
+{
+    double limite_velocidade;
+    int expandidas;
+
+    if (sscanf(linha, "exp %lf", &limite_velocidade) != 1) {
+        return 1;
+    }
+
+    expandidas = expandir_infraestrutura_arvore_minima(grafo, limite_velocidade);
+    return fprintf(saida, "exp %.2f -> %d aresta(s) expandida(s)\n", limite_velocidade, expandidas) >= 0;
+}
+
 int processar_arquivo_consulta(const char *caminho_qry, Cidade cidade, Grafo grafo, const char *caminho_txt)
 {
     FILE *consulta;
@@ -215,6 +229,8 @@ int processar_arquivo_consulta(const char *caminho_qry, Cidade cidade, Grafo gra
             sucesso = processar_comando_mvm(linha, grafo, saida);
         } else if (linha[0] == 'r' && linha[1] == 'e' && linha[2] == 'g' && linha[3] == 's') {
             sucesso = processar_comando_regs(linha, grafo, saida);
+        } else if (linha[0] == 'e' && linha[1] == 'x' && linha[2] == 'p') {
+            sucesso = processar_comando_exp(linha, grafo, saida);
         }
     }
 
