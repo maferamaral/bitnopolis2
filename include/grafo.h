@@ -24,6 +24,7 @@ VerticeGrafo buscar_vertice_grafo(Grafo grafo, const char *id);
 VerticeGrafo buscar_vertice_mais_proximo_grafo(Grafo grafo, double x, double y);
 VerticeGrafo obter_vertice_grafo(Grafo grafo, int indice);
 ArestaGrafo obter_aresta_vertice_grafo(VerticeGrafo vertice, int indice);
+ArestaGrafo buscar_aresta_entre_vertices_grafo(VerticeGrafo origem, VerticeGrafo destino);
 
 int obter_quantidade_vertices_grafo(Grafo grafo);
 int obter_quantidade_arestas_grafo(Grafo grafo);

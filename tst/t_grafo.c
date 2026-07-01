@@ -69,6 +69,8 @@ void test_deve_inserir_aresta_direcionada(void)
     TEST_ASSERT_FLOAT_WITHIN(0.0001, 100.0, obter_comprimento_aresta_grafo(aresta));
     TEST_ASSERT_FLOAT_WITHIN(0.0001, 5.0, obter_velocidade_aresta_grafo(aresta));
     TEST_ASSERT_EQUAL_STRING("Rua_A", obter_nome_aresta_grafo(aresta));
+    TEST_ASSERT_EQUAL_PTR(aresta, buscar_aresta_entre_vertices_grafo(origem, destino));
+    TEST_ASSERT_NULL(buscar_aresta_entre_vertices_grafo(destino, origem));
 
     destruir_grafo(grafo);
 }
@@ -140,6 +142,7 @@ void test_deve_retornar_valores_neutros_para_entradas_nulas(void)
     TEST_ASSERT_NULL(buscar_vertice_grafo(NULL, "v1"));
     TEST_ASSERT_NULL(obter_vertice_grafo(NULL, 0));
     TEST_ASSERT_NULL(obter_aresta_vertice_grafo(NULL, 0));
+    TEST_ASSERT_NULL(buscar_aresta_entre_vertices_grafo(NULL, NULL));
     TEST_ASSERT_EQUAL_INT(0, obter_quantidade_vertices_grafo(NULL));
     TEST_ASSERT_EQUAL_INT(0, obter_quantidade_arestas_grafo(NULL));
     TEST_ASSERT_EQUAL_INT(0, obter_grau_saida_vertice_grafo(NULL));

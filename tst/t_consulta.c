@@ -89,9 +89,11 @@ void test_deve_processar_origem_geografica_e_percurso(void)
     TEST_ASSERT_EQUAL_INT(1, arquivo_txt_contem("@o? R1 cep2 L 0.00 -> (20.00, 0.00)"));
     TEST_ASSERT_EQUAL_INT(1, arquivo_txt_contem("p? R0 R1"));
     TEST_ASSERT_EQUAL_INT(1, arquivo_txt_contem("Percurso mais curto: custo 20.00"));
-    TEST_ASSERT_EQUAL_INT(1, arquivo_txt_contem("A -> B -> D"));
+    TEST_ASSERT_EQUAL_INT(1, arquivo_txt_contem("Siga pela Rua_AB de A ate B."));
+    TEST_ASSERT_EQUAL_INT(1, arquivo_txt_contem("Siga pela Rua_BD de B ate D."));
     TEST_ASSERT_EQUAL_INT(1, arquivo_txt_contem("Percurso mais rapido: custo 2.00"));
-    TEST_ASSERT_EQUAL_INT(1, arquivo_txt_contem("A -> C -> D"));
+    TEST_ASSERT_EQUAL_INT(1, arquivo_txt_contem("Siga pela Rua_AC de A ate C."));
+    TEST_ASSERT_EQUAL_INT(1, arquivo_txt_contem("Siga pela Rua_CD de C ate D."));
 
     destruir_grafo(grafo);
     destruir_cidade(cidade);

@@ -36,16 +36,34 @@ static int obter_indice_registrador(const char *texto)
 static int escrever_caminho_dijkstra(FILE *arquivo, ResultadoDijkstra resultado)
 {
     int i;
+    int quantidade = obter_quantidade_vertices_dijkstra(resultado);
 
-    for (i = 0; i < obter_quantidade_vertices_dijkstra(resultado); i++) {
-        VerticeGrafo vertice = obter_vertice_dijkstra(resultado, i);
+    if (quantidade <= 1) {
+        return escrever_linha_formatada(arquivo, "Origem e destino coincidem.");
+    }
 
-        if (fprintf(arquivo, "%s%s", i == 0 ? "" : " -> ", obter_id_vertice_grafo(vertice)) < 0) {
+    for (i = 0; i < quantidade - 1; i++) {
+        VerticeGrafo origem = obter_vertice_dijkstra(resultado, i);
+        VerticeGrafo destino = obter_vertice_dijkstra(resultado, i + 1);
+        ArestaGrafo aresta = buscar_aresta_entre_vertices_grafo(origem, destino);
+        const char *nome_rua = obter_nome_aresta_grafo(aresta);
+
+        if (nome_rua == NULL) {
+            nome_rua = "via desconhecida";
+        }
+
+        if (fprintf(
+            arquivo,
+            "Siga pela %s de %s ate %s.\n",
+            nome_rua,
+            obter_id_vertice_grafo(origem),
+            obter_id_vertice_grafo(destino)
+        ) < 0) {
             return 0;
         }
     }
 
-    return fprintf(arquivo, "\n") >= 0;
+    return 1;
 }
 
 static int escrever_resultado_percurso(FILE *arquivo, const char *titulo, ResultadoDijkstra resultado)

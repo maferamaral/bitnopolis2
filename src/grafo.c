@@ -300,6 +300,29 @@ ArestaGrafo obter_aresta_vertice_grafo(VerticeGrafo vertice_generico, int indice
     return obter_item_lista(vertice->arestas_saida, indice);
 }
 
+ArestaGrafo buscar_aresta_entre_vertices_grafo(VerticeGrafo origem_generica, VerticeGrafo destino_generico)
+{
+    struct vertice_grafo *origem = origem_generica;
+    struct vertice_grafo *destino = destino_generico;
+    int i;
+    int grau_saida;
+
+    if (origem == NULL || destino == NULL) {
+        return NULL;
+    }
+
+    grau_saida = obter_tamanho_lista(origem->arestas_saida);
+    for (i = 0; i < grau_saida; i++) {
+        struct aresta_grafo *aresta = obter_item_lista(origem->arestas_saida, i);
+
+        if (aresta != NULL && aresta->destino == destino) {
+            return aresta;
+        }
+    }
+
+    return NULL;
+}
+
 int obter_quantidade_vertices_grafo(Grafo grafo_generico)
 {
     struct grafo *grafo = grafo_generico;
