@@ -3,6 +3,7 @@
 #include "cidade.h"
 #include "grafo.h"
 #include "quadra.h"
+#include "saida_svg.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,6 +11,7 @@
 
 #define CAMINHO_QRY_TESTE "/tmp/bitnopolis_t_consulta.qry"
 #define CAMINHO_TXT_TESTE "/tmp/bitnopolis_t_consulta.txt"
+#define CAMINHO_SVG_TESTE "/tmp/bitnopolis_t_consulta.svg"
 
 void setUp(void)
 {
@@ -19,6 +21,7 @@ void tearDown(void)
 {
     remove(CAMINHO_QRY_TESTE);
     remove(CAMINHO_TXT_TESTE);
+    remove(CAMINHO_SVG_TESTE);
 }
 
 static void escrever_qry(const char *conteudo)
@@ -33,6 +36,23 @@ static void escrever_qry(const char *conteudo)
 static int arquivo_txt_contem(const char *trecho)
 {
     FILE *arquivo = fopen(CAMINHO_TXT_TESTE, "r");
+    char linha[512];
+
+    TEST_ASSERT_NOT_NULL(arquivo);
+    while (fgets(linha, sizeof(linha), arquivo) != NULL) {
+        if (strstr(linha, trecho) != NULL) {
+            fclose(arquivo);
+            return 1;
+        }
+    }
+
+    fclose(arquivo);
+    return 0;
+}
+
+static int arquivo_svg_contem(const char *trecho)
+{
+    FILE *arquivo = fopen(CAMINHO_SVG_TESTE, "r");
     char linha[512];
 
     TEST_ASSERT_NOT_NULL(arquivo);
@@ -84,7 +104,9 @@ void test_deve_processar_origem_geografica_e_percurso(void)
         "p? R0 R1 red blue\n"
     );
 
-    TEST_ASSERT_EQUAL_INT(1, processar_arquivo_consulta(CAMINHO_QRY_TESTE, cidade, grafo, CAMINHO_TXT_TESTE));
+    TEST_ASSERT_EQUAL_INT(1, iniciar_cidade_svg(CAMINHO_SVG_TESTE, cidade));
+    TEST_ASSERT_EQUAL_INT(1, processar_arquivo_consulta(CAMINHO_QRY_TESTE, cidade, grafo, CAMINHO_TXT_TESTE, CAMINHO_SVG_TESTE));
+    TEST_ASSERT_EQUAL_INT(1, finalizar_svg(CAMINHO_SVG_TESTE));
     TEST_ASSERT_EQUAL_INT(1, arquivo_txt_contem("@o? R0 cep1 L 0.00 -> (0.00, 0.00)"));
     TEST_ASSERT_EQUAL_INT(1, arquivo_txt_contem("@o? R1 cep2 L 0.00 -> (20.00, 0.00)"));
     TEST_ASSERT_EQUAL_INT(1, arquivo_txt_contem("p? R0 R1"));
@@ -94,6 +116,13 @@ void test_deve_processar_origem_geografica_e_percurso(void)
     TEST_ASSERT_EQUAL_INT(1, arquivo_txt_contem("Percurso mais rapido: custo 2.00"));
     TEST_ASSERT_EQUAL_INT(1, arquivo_txt_contem("Siga pela Rua_AC de A ate C."));
     TEST_ASSERT_EQUAL_INT(1, arquivo_txt_contem("Siga pela Rua_CD de C ate D."));
+    TEST_ASSERT_EQUAL_INT(1, arquivo_svg_contem("id=\"percurso_curto_1\""));
+    TEST_ASSERT_EQUAL_INT(1, arquivo_svg_contem("stroke=\"red\""));
+    TEST_ASSERT_EQUAL_INT(1, arquivo_svg_contem("id=\"percurso_rapido_1\""));
+    TEST_ASSERT_EQUAL_INT(1, arquivo_svg_contem("stroke=\"blue\""));
+    TEST_ASSERT_EQUAL_INT(1, arquivo_svg_contem("animateMotion"));
+    TEST_ASSERT_EQUAL_INT(1, arquivo_svg_contem(">I<"));
+    TEST_ASSERT_EQUAL_INT(1, arquivo_svg_contem(">F<"));
 
     destruir_grafo(grafo);
     destruir_cidade(cidade);
@@ -114,7 +143,7 @@ void test_deve_informar_destino_inacessivel_quando_percurso_nao_existir(void)
         "p? R0 R1 red blue\n"
     );
 
-    TEST_ASSERT_EQUAL_INT(1, processar_arquivo_consulta(CAMINHO_QRY_TESTE, cidade, grafo, CAMINHO_TXT_TESTE));
+    TEST_ASSERT_EQUAL_INT(1, processar_arquivo_consulta(CAMINHO_QRY_TESTE, cidade, grafo, CAMINHO_TXT_TESTE, CAMINHO_SVG_TESTE));
     TEST_ASSERT_EQUAL_INT(1, arquivo_txt_contem("Destino inacessivel"));
 
     destruir_grafo(grafo);
@@ -130,7 +159,7 @@ void test_deve_processar_mvm_e_alterar_velocidades(void)
 
     escrever_qry("mvm 9 0 0 15 5\n");
 
-    TEST_ASSERT_EQUAL_INT(1, processar_arquivo_consulta(CAMINHO_QRY_TESTE, cidade, grafo, CAMINHO_TXT_TESTE));
+    TEST_ASSERT_EQUAL_INT(1, processar_arquivo_consulta(CAMINHO_QRY_TESTE, cidade, grafo, CAMINHO_TXT_TESTE, CAMINHO_SVG_TESTE));
     TEST_ASSERT_EQUAL_INT(1, arquivo_txt_contem("mvm 9.00 0.00 0.00 15.00 5.00 -> 1 aresta(s) atualizada(s)"));
 
     origem = buscar_vertice_grafo(grafo, "A");
@@ -148,7 +177,7 @@ void test_deve_processar_regs_e_informar_componentes(void)
 
     escrever_qry("regs 5\n");
 
-    TEST_ASSERT_EQUAL_INT(1, processar_arquivo_consulta(CAMINHO_QRY_TESTE, cidade, grafo, CAMINHO_TXT_TESTE));
+    TEST_ASSERT_EQUAL_INT(1, processar_arquivo_consulta(CAMINHO_QRY_TESTE, cidade, grafo, CAMINHO_TXT_TESTE, CAMINHO_SVG_TESTE));
     TEST_ASSERT_EQUAL_INT(1, arquivo_txt_contem("regs 5.00 -> Numero de componentes conexos: 1"));
 
     destruir_grafo(grafo);
@@ -164,7 +193,7 @@ void test_deve_processar_exp_e_expandir_arestas(void)
 
     escrever_qry("exp 5\n");
 
-    TEST_ASSERT_EQUAL_INT(1, processar_arquivo_consulta(CAMINHO_QRY_TESTE, cidade, grafo, CAMINHO_TXT_TESTE));
+    TEST_ASSERT_EQUAL_INT(1, processar_arquivo_consulta(CAMINHO_QRY_TESTE, cidade, grafo, CAMINHO_TXT_TESTE, CAMINHO_SVG_TESTE));
     TEST_ASSERT_EQUAL_INT(1, arquivo_txt_contem("exp 5.00 -> 2 aresta(s) expandida(s)"));
     TEST_ASSERT_FLOAT_WITHIN(0.0001, 1.5, obter_velocidade_aresta_grafo(aresta));
 
@@ -179,10 +208,11 @@ void test_deve_rejeitar_entradas_invalidas_consulta(void)
 
     escrever_qry("@o? R0 cep1 L 0\n");
 
-    TEST_ASSERT_EQUAL_INT(0, processar_arquivo_consulta(NULL, cidade, grafo, CAMINHO_TXT_TESTE));
-    TEST_ASSERT_EQUAL_INT(0, processar_arquivo_consulta(CAMINHO_QRY_TESTE, NULL, grafo, CAMINHO_TXT_TESTE));
-    TEST_ASSERT_EQUAL_INT(0, processar_arquivo_consulta(CAMINHO_QRY_TESTE, cidade, NULL, CAMINHO_TXT_TESTE));
-    TEST_ASSERT_EQUAL_INT(0, processar_arquivo_consulta(CAMINHO_QRY_TESTE, cidade, grafo, NULL));
+    TEST_ASSERT_EQUAL_INT(0, processar_arquivo_consulta(NULL, cidade, grafo, CAMINHO_TXT_TESTE, CAMINHO_SVG_TESTE));
+    TEST_ASSERT_EQUAL_INT(0, processar_arquivo_consulta(CAMINHO_QRY_TESTE, NULL, grafo, CAMINHO_TXT_TESTE, CAMINHO_SVG_TESTE));
+    TEST_ASSERT_EQUAL_INT(0, processar_arquivo_consulta(CAMINHO_QRY_TESTE, cidade, NULL, CAMINHO_TXT_TESTE, CAMINHO_SVG_TESTE));
+    TEST_ASSERT_EQUAL_INT(0, processar_arquivo_consulta(CAMINHO_QRY_TESTE, cidade, grafo, NULL, CAMINHO_SVG_TESTE));
+    TEST_ASSERT_EQUAL_INT(0, processar_arquivo_consulta(CAMINHO_QRY_TESTE, cidade, grafo, CAMINHO_TXT_TESTE, NULL));
 
     destruir_grafo(grafo);
     destruir_cidade(cidade);

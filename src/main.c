@@ -189,7 +189,7 @@ int main(int argc, char **argv)
         }
     }
 
-    if (!escrever_cidade_svg(caminho_svg, cidade)) {
+    if (!iniciar_cidade_svg(caminho_svg, cidade)) {
         fprintf(stderr, "Erro: nao foi possivel gerar o SVG: %s\n", caminho_svg);
         liberar_recursos(argumentos, cidade, grafo, caminho_geo, caminho_via, caminho_qry, base_saida, caminho_txt, caminho_svg);
         return 1;
@@ -197,13 +197,19 @@ int main(int argc, char **argv)
 
     if (argumentos_possuem_consulta(argumentos)) {
         caminho_qry = montar_caminho_entrada(diretorio_entrada, obter_arquivo_consulta(argumentos));
-        if (caminho_qry == NULL || !processar_arquivo_consulta(caminho_qry, cidade, grafo, caminho_txt)) {
+        if (caminho_qry == NULL || !processar_arquivo_consulta(caminho_qry, cidade, grafo, caminho_txt, caminho_svg)) {
             fprintf(stderr, "Erro: nao foi possivel processar o arquivo QRY: %s\n", caminho_qry == NULL ? "(nulo)" : caminho_qry);
             liberar_recursos(argumentos, cidade, grafo, caminho_geo, caminho_via, caminho_qry, base_saida, caminho_txt, caminho_svg);
             return 1;
         }
     } else if (!escrever_relatorio_cidade_texto(caminho_txt, cidade)) {
         fprintf(stderr, "Erro: nao foi possivel gerar o TXT: %s\n", caminho_txt);
+        liberar_recursos(argumentos, cidade, grafo, caminho_geo, caminho_via, caminho_qry, base_saida, caminho_txt, caminho_svg);
+        return 1;
+    }
+
+    if (!finalizar_svg(caminho_svg)) {
+        fprintf(stderr, "Erro: nao foi possivel finalizar o SVG: %s\n", caminho_svg);
         liberar_recursos(argumentos, cidade, grafo, caminho_geo, caminho_via, caminho_qry, base_saida, caminho_txt, caminho_svg);
         return 1;
     }

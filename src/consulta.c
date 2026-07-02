@@ -6,6 +6,7 @@
 #include "percurso.h"
 #include "quadra.h"
 #include "registrador.h"
+#include "saida_svg.h"
 
 #include <stdio.h>
 
@@ -111,12 +112,14 @@ static int processar_comando_origem(const char *linha, Cidade cidade, Registrado
     ) >= 0;
 }
 
-static int processar_comando_percurso(const char *linha, Grafo grafo, Registradores registradores, FILE *saida)
+static int processar_comando_percurso(const char *linha, Grafo grafo, Registradores registradores, FILE *saida, const char *caminho_svg, int *numero_percurso)
 {
     char origem[TAMANHO_TEXTO_CONSULTA];
     char destino[TAMANHO_TEXTO_CONSULTA];
     char cor_curto[TAMANHO_TEXTO_CONSULTA];
     char cor_rapido[TAMANHO_TEXTO_CONSULTA];
+    char id_curto[TAMANHO_TEXTO_CONSULTA];
+    char id_rapido[TAMANHO_TEXTO_CONSULTA];
     int indice_origem;
     int indice_destino;
     Percurso percurso;
@@ -143,6 +146,12 @@ static int processar_comando_percurso(const char *linha, Grafo grafo, Registrado
 
     sucesso = sucesso && escrever_resultado_percurso(saida, "Percurso mais curto", obter_percurso_curto(percurso));
     sucesso = sucesso && escrever_resultado_percurso(saida, "Percurso mais rapido", obter_percurso_rapido(percurso));
+    snprintf(id_curto, sizeof(id_curto), "percurso_curto_%d", *numero_percurso);
+    snprintf(id_rapido, sizeof(id_rapido), "percurso_rapido_%d", *numero_percurso);
+    (*numero_percurso)++;
+    sucesso = sucesso && acrescentar_percurso_svg(caminho_svg, obter_percurso_curto(percurso), cor_curto, id_curto, 1);
+    sucesso = sucesso && acrescentar_percurso_svg(caminho_svg, obter_percurso_rapido(percurso), cor_rapido, id_rapido, 0);
+    sucesso = sucesso && acrescentar_marcadores_percurso_svg(caminho_svg, obter_percurso_curto(percurso));
 
     destruir_percurso(percurso);
     return sucesso;
@@ -208,15 +217,16 @@ static int processar_comando_exp(const char *linha, Grafo grafo, FILE *saida)
     return fprintf(saida, "exp %.2f -> %d aresta(s) expandida(s)\n", limite_velocidade, expandidas) >= 0;
 }
 
-int processar_arquivo_consulta(const char *caminho_qry, Cidade cidade, Grafo grafo, const char *caminho_txt)
+int processar_arquivo_consulta(const char *caminho_qry, Cidade cidade, Grafo grafo, const char *caminho_txt, const char *caminho_svg)
 {
     FILE *consulta;
     FILE *saida;
     Registradores registradores;
     char linha[TAMANHO_LINHA_CONSULTA];
     int sucesso = 1;
+    int numero_percurso = 1;
 
-    if (caminho_qry == NULL || cidade == NULL || grafo == NULL || caminho_txt == NULL) {
+    if (caminho_qry == NULL || cidade == NULL || grafo == NULL || caminho_txt == NULL || caminho_svg == NULL) {
         return 0;
     }
 
@@ -242,7 +252,7 @@ int processar_arquivo_consulta(const char *caminho_qry, Cidade cidade, Grafo gra
         if (linha[0] == '@' && linha[1] == 'o' && linha[2] == '?') {
             sucesso = processar_comando_origem(linha, cidade, registradores, saida);
         } else if (linha[0] == 'p' && linha[1] == '?') {
-            sucesso = processar_comando_percurso(linha, grafo, registradores, saida);
+            sucesso = processar_comando_percurso(linha, grafo, registradores, saida, caminho_svg, &numero_percurso);
         } else if (linha[0] == 'm' && linha[1] == 'v' && linha[2] == 'm') {
             sucesso = processar_comando_mvm(linha, grafo, saida);
         } else if (linha[0] == 'r' && linha[1] == 'e' && linha[2] == 'g' && linha[3] == 's') {

@@ -4,6 +4,6 @@
 #include "cidade.h"
 #include "grafo.h"
 
-int processar_arquivo_consulta(const char *caminho_qry, Cidade cidade, Grafo grafo, const char *caminho_txt);
+int processar_arquivo_consulta(const char *caminho_qry, Cidade cidade, Grafo grafo, const char *caminho_txt, const char *caminho_svg);
 
 #endif
