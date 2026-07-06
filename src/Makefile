@@ -100,11 +100,15 @@ t_consulta: $(SRC_DIR)/consulta.o $(SRC_DIR)/saida_svg.o $(SRC_DIR)/arvore_minim
 	$(CC) $(CPPFLAGS) $(CFLAGS) $^ -o $(TST_DIR)/t_consulta_run
 	$(TST_DIR)/t_consulta_run
 
-tstall: t_argumentos t_lista t_quadra t_cidade t_geo t_grafo t_via t_registrador t_saida_texto t_saida_svg t_fila_prioridade t_dijkstra t_percurso t_componentes t_arvore_minima t_consulta
+t_integracao: $(PROJ_NAME) $(TST_DIR)/t_integracao.c $(UNITY_DIR)/unity.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(TST_DIR)/t_integracao.c $(UNITY_DIR)/unity.c -o $(TST_DIR)/t_integracao_run
+	$(TST_DIR)/t_integracao_run
+
+tstall: t_argumentos t_lista t_quadra t_cidade t_geo t_grafo t_via t_registrador t_saida_texto t_saida_svg t_fila_prioridade t_dijkstra t_percurso t_componentes t_arvore_minima t_consulta t_integracao
 
 clean:
 	rm -f $(SRC_DIR)/*.o
 	rm -f $(PROJ_NAME)
 	rm -f $(TST_DIR)/*_run
 
-.PHONY: all clean tstall t_argumentos t_lista t_quadra t_cidade t_geo t_grafo t_via t_registrador t_saida_texto t_saida_svg t_fila_prioridade t_dijkstra t_percurso t_componentes t_arvore_minima t_consulta
+.PHONY: all clean tstall t_argumentos t_lista t_quadra t_cidade t_geo t_grafo t_via t_registrador t_saida_texto t_saida_svg t_fila_prioridade t_dijkstra t_percurso t_componentes t_arvore_minima t_consulta t_integracao
