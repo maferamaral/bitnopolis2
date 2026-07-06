@@ -116,6 +116,12 @@ void test_deve_processar_origem_geografica_e_percurso(void)
     TEST_ASSERT_EQUAL_INT(1, arquivo_txt_contem("Percurso mais rapido: custo 2.00"));
     TEST_ASSERT_EQUAL_INT(1, arquivo_txt_contem("Siga pela Rua_AC de A ate C."));
     TEST_ASSERT_EQUAL_INT(1, arquivo_txt_contem("Siga pela Rua_CD de C ate D."));
+    TEST_ASSERT_EQUAL_INT(1, arquivo_svg_contem("id=\"registrador_R0\""));
+    TEST_ASSERT_EQUAL_INT(1, arquivo_svg_contem("id=\"registrador_R1\""));
+    TEST_ASSERT_EQUAL_INT(1, arquivo_svg_contem("stroke=\"red\""));
+    TEST_ASSERT_EQUAL_INT(1, arquivo_svg_contem("stroke-dasharray=\"4 3\""));
+    TEST_ASSERT_EQUAL_INT(1, arquivo_svg_contem(">R0<"));
+    TEST_ASSERT_EQUAL_INT(1, arquivo_svg_contem(">R1<"));
     TEST_ASSERT_EQUAL_INT(1, arquivo_svg_contem("id=\"percurso_curto_1\""));
     TEST_ASSERT_EQUAL_INT(1, arquivo_svg_contem("stroke=\"red\""));
     TEST_ASSERT_EQUAL_INT(1, arquivo_svg_contem("id=\"percurso_rapido_1\""));

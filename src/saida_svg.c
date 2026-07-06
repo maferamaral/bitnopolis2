@@ -232,6 +232,41 @@ int escrever_cidade_svg(const char *caminho_svg, Cidade cidade)
     return iniciar_cidade_svg(caminho_svg, cidade) && finalizar_svg(caminho_svg);
 }
 
+int acrescentar_registrador_svg(const char *caminho_svg, int indice, double x, double y)
+{
+    FILE *arquivo;
+
+    if (caminho_svg == NULL || indice < 0) {
+        return 0;
+    }
+
+    arquivo = fopen(caminho_svg, "a");
+    if (arquivo == NULL) {
+        return 0;
+    }
+
+    fprintf(arquivo, "  <g id=\"registrador_R%d\">\n", indice);
+    fprintf(
+        arquivo,
+        "    <line x1=\"%.2f\" y1=\"%.2f\" x2=\"%.2f\" y2=\"%.2f\" stroke=\"red\" stroke-width=\"1.50\" stroke-dasharray=\"4 3\" />\n",
+        x,
+        y - 20.0,
+        x,
+        y + 20.0
+    );
+    fprintf(
+        arquivo,
+        "    <text x=\"%.2f\" y=\"%.2f\" text-anchor=\"middle\" font-size=\"8\" fill=\"red\">R%d</text>\n",
+        x,
+        y - 23.0,
+        indice
+    );
+    fprintf(arquivo, "  </g>\n");
+
+    fclose(arquivo);
+    return 1;
+}
+
 int acrescentar_percurso_svg(const char *caminho_svg, ResultadoDijkstra resultado, const char *cor, const char *id, int animar)
 {
     FILE *arquivo;

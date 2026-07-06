@@ -80,7 +80,7 @@ static int escrever_resultado_percurso(FILE *arquivo, const char *titulo, Result
     return escrever_caminho_dijkstra(arquivo, resultado);
 }
 
-static int processar_comando_origem(const char *linha, Cidade cidade, Registradores registradores, FILE *saida)
+static int processar_comando_origem(const char *linha, Cidade cidade, Registradores registradores, FILE *saida, const char *caminho_svg)
 {
     char registrador[TAMANHO_TEXTO_CONSULTA];
     char cep[TAMANHO_TEXTO_CONSULTA];
@@ -100,7 +100,7 @@ static int processar_comando_origem(const char *linha, Cidade cidade, Registrado
         return fprintf(saida, "@o? %s %s %c %.2f -> endereco invalido\n", registrador, cep, face, numero) >= 0;
     }
 
-    return fprintf(
+    if (fprintf(
         saida,
         "@o? %s %s %c %.2f -> (%.2f, %.2f)\n",
         registrador,
@@ -109,7 +109,16 @@ static int processar_comando_origem(const char *linha, Cidade cidade, Registrado
         numero,
         obter_x_registrador(registradores, indice),
         obter_y_registrador(registradores, indice)
-    ) >= 0;
+    ) < 0) {
+        return 0;
+    }
+
+    return acrescentar_registrador_svg(
+        caminho_svg,
+        indice,
+        obter_x_registrador(registradores, indice),
+        obter_y_registrador(registradores, indice)
+    );
 }
 
 static int processar_comando_percurso(const char *linha, Grafo grafo, Registradores registradores, FILE *saida, const char *caminho_svg, int *numero_percurso)
@@ -250,7 +259,7 @@ int processar_arquivo_consulta(const char *caminho_qry, Cidade cidade, Grafo gra
 
     while (fgets(linha, sizeof(linha), consulta) != NULL && sucesso) {
         if (linha[0] == '@' && linha[1] == 'o' && linha[2] == '?') {
-            sucesso = processar_comando_origem(linha, cidade, registradores, saida);
+            sucesso = processar_comando_origem(linha, cidade, registradores, saida, caminho_svg);
         } else if (linha[0] == 'p' && linha[1] == '?') {
             sucesso = processar_comando_percurso(linha, grafo, registradores, saida, caminho_svg, &numero_percurso);
         } else if (linha[0] == 'm' && linha[1] == 'v' && linha[2] == 'm') {
