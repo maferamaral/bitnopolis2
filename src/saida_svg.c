@@ -3,6 +3,7 @@
 #include "quadra.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 
 static void calcular_limites_cidade(Cidade cidade, double *min_x, double *min_y, double *max_x, double *max_y)
 {
@@ -264,6 +265,118 @@ int acrescentar_registrador_svg(const char *caminho_svg, int indice, double x, d
     fprintf(arquivo, "  </g>\n");
 
     fclose(arquivo);
+    return 1;
+}
+
+int acrescentar_componentes_svg(const char *caminho_svg, Grafo grafo, Componentes componentes)
+{
+    static const char *cores[] = {
+        "#ff6b6b",
+        "#4dabf7",
+        "#69db7c",
+        "#ffd43b",
+        "#b197fc",
+        "#66d9e8"
+    };
+    FILE *arquivo;
+    double *min_x;
+    double *min_y;
+    double *max_x;
+    double *max_y;
+    int *possui_vertice;
+    int quantidade_componentes;
+    int quantidade_vertices;
+    int i;
+
+    if (caminho_svg == NULL || grafo == NULL || componentes == NULL) {
+        return 0;
+    }
+
+    quantidade_componentes = obter_quantidade_componentes(componentes);
+    quantidade_vertices = obter_quantidade_vertices_grafo(grafo);
+    if (quantidade_componentes <= 0) {
+        return 1;
+    }
+
+    min_x = malloc((size_t) quantidade_componentes * sizeof(*min_x));
+    min_y = malloc((size_t) quantidade_componentes * sizeof(*min_y));
+    max_x = malloc((size_t) quantidade_componentes * sizeof(*max_x));
+    max_y = malloc((size_t) quantidade_componentes * sizeof(*max_y));
+    possui_vertice = calloc((size_t) quantidade_componentes, sizeof(*possui_vertice));
+
+    if (min_x == NULL || min_y == NULL || max_x == NULL || max_y == NULL || possui_vertice == NULL) {
+        free(min_x);
+        free(min_y);
+        free(max_x);
+        free(max_y);
+        free(possui_vertice);
+        return 0;
+    }
+
+    for (i = 0; i < quantidade_vertices; i++) {
+        VerticeGrafo vertice = obter_vertice_grafo(grafo, i);
+        int componente = obter_componente_vertice(componentes, vertice);
+        double x;
+        double y;
+
+        if (componente < 0 || componente >= quantidade_componentes) {
+            continue;
+        }
+
+        x = obter_x_vertice_grafo(vertice);
+        y = obter_y_vertice_grafo(vertice);
+        incluir_ponto_limites(x, y, &min_x[componente], &min_y[componente], &max_x[componente], &max_y[componente], &possui_vertice[componente]);
+    }
+
+    arquivo = fopen(caminho_svg, "a");
+    if (arquivo == NULL) {
+        free(min_x);
+        free(min_y);
+        free(max_x);
+        free(max_y);
+        free(possui_vertice);
+        return 0;
+    }
+
+    fprintf(arquivo, "  <g id=\"componentes_regs\">\n");
+    for (i = 0; i < quantidade_componentes; i++) {
+        double margem = 5.0;
+        double largura;
+        double altura;
+
+        if (!possui_vertice[i]) {
+            continue;
+        }
+
+        largura = max_x[i] - min_x[i] + 2.0 * margem;
+        altura = max_y[i] - min_y[i] + 2.0 * margem;
+        if (largura < 2.0 * margem) {
+            largura = 2.0 * margem;
+        }
+        if (altura < 2.0 * margem) {
+            altura = 2.0 * margem;
+        }
+
+        fprintf(
+            arquivo,
+            "    <rect id=\"componente_%d\" x=\"%.2f\" y=\"%.2f\" width=\"%.2f\" height=\"%.2f\" fill=\"%s\" fill-opacity=\"0.50\" stroke=\"%s\" stroke-width=\"1.50\" />\n",
+            i,
+            min_x[i] - margem,
+            min_y[i] - margem,
+            largura,
+            altura,
+            cores[i % (int) (sizeof(cores) / sizeof(cores[0]))],
+            cores[i % (int) (sizeof(cores) / sizeof(cores[0]))]
+        );
+    }
+    fprintf(arquivo, "  </g>\n");
+
+    fclose(arquivo);
+    free(min_x);
+    free(min_y);
+    free(max_x);
+    free(max_y);
+    free(possui_vertice);
     return 1;
 }
 

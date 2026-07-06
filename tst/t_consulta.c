@@ -185,6 +185,9 @@ void test_deve_processar_regs_e_informar_componentes(void)
 
     TEST_ASSERT_EQUAL_INT(1, processar_arquivo_consulta(CAMINHO_QRY_TESTE, cidade, grafo, CAMINHO_TXT_TESTE, CAMINHO_SVG_TESTE));
     TEST_ASSERT_EQUAL_INT(1, arquivo_txt_contem("regs 5.00 -> Numero de componentes conexos: 1"));
+    TEST_ASSERT_EQUAL_INT(1, arquivo_svg_contem("id=\"componentes_regs\""));
+    TEST_ASSERT_EQUAL_INT(1, arquivo_svg_contem("id=\"componente_0\""));
+    TEST_ASSERT_EQUAL_INT(1, arquivo_svg_contem("fill-opacity=\"0.50\""));
 
     destruir_grafo(grafo);
     destruir_cidade(cidade);

@@ -72,7 +72,7 @@ t_saida_texto: $(SRC_DIR)/saida_texto.o $(SRC_DIR)/cidade.o $(SRC_DIR)/lista.o $
 	$(CC) $(CPPFLAGS) $(CFLAGS) $^ -o $(TST_DIR)/t_saida_texto_run
 	$(TST_DIR)/t_saida_texto_run
 
-t_saida_svg: $(SRC_DIR)/saida_svg.o $(SRC_DIR)/dijkstra.o $(SRC_DIR)/fila_prioridade.o $(SRC_DIR)/grafo.o $(SRC_DIR)/lista.o $(SRC_DIR)/cidade.o $(SRC_DIR)/quadra.o $(TST_DIR)/t_saida_svg.c $(UNITY_DIR)/unity.c
+t_saida_svg: $(SRC_DIR)/saida_svg.o $(SRC_DIR)/componentes.o $(SRC_DIR)/dijkstra.o $(SRC_DIR)/fila_prioridade.o $(SRC_DIR)/grafo.o $(SRC_DIR)/lista.o $(SRC_DIR)/cidade.o $(SRC_DIR)/quadra.o $(TST_DIR)/t_saida_svg.c $(UNITY_DIR)/unity.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) $^ -o $(TST_DIR)/t_saida_svg_run
 	$(TST_DIR)/t_saida_svg_run
 

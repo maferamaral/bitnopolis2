@@ -192,11 +192,12 @@ static int processar_comando_mvm(const char *linha, Grafo grafo, FILE *saida)
     ) >= 0;
 }
 
-static int processar_comando_regs(const char *linha, Grafo grafo, FILE *saida)
+static int processar_comando_regs(const char *linha, Grafo grafo, FILE *saida, const char *caminho_svg)
 {
     double limite_velocidade;
     Componentes componentes;
     int quantidade;
+    int sucesso;
 
     if (sscanf(linha, "regs %lf", &limite_velocidade) != 1) {
         return 1;
@@ -208,9 +209,10 @@ static int processar_comando_regs(const char *linha, Grafo grafo, FILE *saida)
     }
 
     quantidade = obter_quantidade_componentes(componentes);
+    sucesso = acrescentar_componentes_svg(caminho_svg, grafo, componentes);
     destruir_componentes(componentes);
 
-    return fprintf(saida, "regs %.2f -> Numero de componentes conexos: %d\n", limite_velocidade, quantidade) >= 0;
+    return sucesso && fprintf(saida, "regs %.2f -> Numero de componentes conexos: %d\n", limite_velocidade, quantidade) >= 0;
 }
 
 static int processar_comando_exp(const char *linha, Grafo grafo, FILE *saida)
@@ -265,7 +267,7 @@ int processar_arquivo_consulta(const char *caminho_qry, Cidade cidade, Grafo gra
         } else if (linha[0] == 'm' && linha[1] == 'v' && linha[2] == 'm') {
             sucesso = processar_comando_mvm(linha, grafo, saida);
         } else if (linha[0] == 'r' && linha[1] == 'e' && linha[2] == 'g' && linha[3] == 's') {
-            sucesso = processar_comando_regs(linha, grafo, saida);
+            sucesso = processar_comando_regs(linha, grafo, saida, caminho_svg);
         } else if (linha[0] == 'e' && linha[1] == 'x' && linha[2] == 'p') {
             sucesso = processar_comando_exp(linha, grafo, saida);
         }
