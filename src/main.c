@@ -189,7 +189,7 @@ int main(int argc, char **argv)
         }
     }
 
-    if (!iniciar_cidade_svg(caminho_svg, cidade)) {
+    if (!iniciar_mapa_svg(caminho_svg, cidade, grafo)) {
         fprintf(stderr, "Erro: nao foi possivel gerar o SVG: %s\n", caminho_svg);
         liberar_recursos(argumentos, cidade, grafo, caminho_geo, caminho_via, caminho_qry, base_saida, caminho_txt, caminho_svg);
         return 1;

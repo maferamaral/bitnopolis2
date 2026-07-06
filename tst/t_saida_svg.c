@@ -1,6 +1,7 @@
 #include "unity.h"
 #include "saida_svg.h"
 #include "cidade.h"
+#include "grafo.h"
 #include "quadra.h"
 
 #include <stdio.h>
@@ -55,6 +56,29 @@ void test_deve_escrever_svg_com_quadras(void)
     destruir_cidade(cidade);
 }
 
+void test_deve_escrever_svg_com_grafo_viario(void)
+{
+    Cidade cidade = criar_cidade();
+    Grafo grafo = criar_grafo();
+
+    TEST_ASSERT_NOT_NULL(cidade);
+    TEST_ASSERT_NOT_NULL(grafo);
+    TEST_ASSERT_EQUAL_INT(1, inserir_vertice_grafo(grafo, "A", 0.0, 0.0));
+    TEST_ASSERT_EQUAL_INT(1, inserir_vertice_grafo(grafo, "B", 40.0, 20.0));
+    TEST_ASSERT_EQUAL_INT(1, inserir_aresta_grafo(grafo, "A", "B", "-", "-", 44.0, 10.0, "Rua_AB"));
+
+    TEST_ASSERT_EQUAL_INT(1, iniciar_mapa_svg(CAMINHO_SVG_TESTE, cidade, grafo));
+    TEST_ASSERT_EQUAL_INT(1, finalizar_svg(CAMINHO_SVG_TESTE));
+    TEST_ASSERT_EQUAL_INT(1, arquivo_contem_svg("id=\"vias\""));
+    TEST_ASSERT_EQUAL_INT(1, arquivo_contem_svg("<line"));
+    TEST_ASSERT_EQUAL_INT(1, arquivo_contem_svg("x1=\"0.00\""));
+    TEST_ASSERT_EQUAL_INT(1, arquivo_contem_svg("x2=\"40.00\""));
+    TEST_ASSERT_EQUAL_INT(1, arquivo_contem_svg("id=\"cruzamentos\""));
+
+    destruir_grafo(grafo);
+    destruir_cidade(cidade);
+}
+
 void test_deve_rejeitar_entradas_invalidas_svg(void)
 {
     Cidade cidade = criar_cidade();
@@ -70,6 +94,7 @@ int main(void)
 {
     UNITY_BEGIN();
     RUN_TEST(test_deve_escrever_svg_com_quadras);
+    RUN_TEST(test_deve_escrever_svg_com_grafo_viario);
     RUN_TEST(test_deve_rejeitar_entradas_invalidas_svg);
     return UNITY_END();
 }

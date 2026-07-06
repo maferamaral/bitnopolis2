@@ -40,6 +40,60 @@ static void calcular_limites_cidade(Cidade cidade, double *min_x, double *min_y,
     }
 }
 
+static void incluir_ponto_limites(double x, double y, double *min_x, double *min_y, double *max_x, double *max_y, int *possui_ponto)
+{
+    if (!*possui_ponto || x < *min_x) {
+        *min_x = x;
+    }
+    if (!*possui_ponto || y < *min_y) {
+        *min_y = y;
+    }
+    if (!*possui_ponto || x > *max_x) {
+        *max_x = x;
+    }
+    if (!*possui_ponto || y > *max_y) {
+        *max_y = y;
+    }
+
+    *possui_ponto = 1;
+}
+
+static void calcular_limites_mapa(Cidade cidade, Grafo grafo, double *min_x, double *min_y, double *max_x, double *max_y)
+{
+    int i;
+    int quantidade_vertices;
+    int possui_ponto = 0;
+
+    calcular_limites_cidade(cidade, min_x, min_y, max_x, max_y);
+    possui_ponto = obter_quantidade_quadras_cidade(cidade) > 0;
+
+    if (grafo == NULL) {
+        return;
+    }
+
+    quantidade_vertices = obter_quantidade_vertices_grafo(grafo);
+    for (i = 0; i < quantidade_vertices; i++) {
+        VerticeGrafo vertice = obter_vertice_grafo(grafo, i);
+
+        incluir_ponto_limites(
+            obter_x_vertice_grafo(vertice),
+            obter_y_vertice_grafo(vertice),
+            min_x,
+            min_y,
+            max_x,
+            max_y,
+            &possui_ponto
+        );
+    }
+
+    if (!possui_ponto) {
+        *min_x = 0.0;
+        *min_y = 0.0;
+        *max_x = 100.0;
+        *max_y = 100.0;
+    }
+}
+
 static void escrever_quadra_svg(FILE *arquivo, Quadra quadra)
 {
     double x = obter_x_quadra(quadra) - obter_largura_quadra(quadra);
@@ -59,7 +113,53 @@ static void escrever_quadra_svg(FILE *arquivo, Quadra quadra)
     );
 }
 
-int iniciar_cidade_svg(const char *caminho_svg, Cidade cidade)
+static void escrever_grafo_svg(FILE *arquivo, Grafo grafo)
+{
+    int i;
+    int j;
+    int quantidade_vertices;
+
+    if (grafo == NULL) {
+        return;
+    }
+
+    quantidade_vertices = obter_quantidade_vertices_grafo(grafo);
+    fprintf(arquivo, "  <g id=\"vias\" fill=\"none\" stroke=\"#666666\" stroke-width=\"1.50\" stroke-linecap=\"round\">\n");
+    for (i = 0; i < quantidade_vertices; i++) {
+        VerticeGrafo origem = obter_vertice_grafo(grafo, i);
+        int quantidade_arestas = obter_grau_saida_vertice_grafo(origem);
+
+        for (j = 0; j < quantidade_arestas; j++) {
+            ArestaGrafo aresta = obter_aresta_vertice_grafo(origem, j);
+            VerticeGrafo destino = obter_destino_aresta_grafo(aresta);
+
+            fprintf(
+                arquivo,
+                "    <line x1=\"%.2f\" y1=\"%.2f\" x2=\"%.2f\" y2=\"%.2f\" />\n",
+                obter_x_vertice_grafo(origem),
+                obter_y_vertice_grafo(origem),
+                obter_x_vertice_grafo(destino),
+                obter_y_vertice_grafo(destino)
+            );
+        }
+    }
+    fprintf(arquivo, "  </g>\n");
+
+    fprintf(arquivo, "  <g id=\"cruzamentos\" fill=\"#333333\" stroke=\"none\">\n");
+    for (i = 0; i < quantidade_vertices; i++) {
+        VerticeGrafo vertice = obter_vertice_grafo(grafo, i);
+
+        fprintf(
+            arquivo,
+            "    <circle cx=\"%.2f\" cy=\"%.2f\" r=\"1.80\" />\n",
+            obter_x_vertice_grafo(vertice),
+            obter_y_vertice_grafo(vertice)
+        );
+    }
+    fprintf(arquivo, "  </g>\n");
+}
+
+int iniciar_mapa_svg(const char *caminho_svg, Cidade cidade, Grafo grafo)
 {
     FILE *arquivo;
     int i;
@@ -80,7 +180,7 @@ int iniciar_cidade_svg(const char *caminho_svg, Cidade cidade)
         return 0;
     }
 
-    calcular_limites_cidade(cidade, &min_x, &min_y, &max_x, &max_y);
+    calcular_limites_mapa(cidade, grafo, &min_x, &min_y, &max_x, &max_y);
     largura = max_x - min_x;
     altura = max_y - min_y;
 
@@ -98,9 +198,15 @@ int iniciar_cidade_svg(const char *caminho_svg, Cidade cidade)
     for (i = 0; i < quantidade; i++) {
         escrever_quadra_svg(arquivo, obter_quadra_cidade(cidade, i));
     }
+    escrever_grafo_svg(arquivo, grafo);
 
     fclose(arquivo);
     return 1;
+}
+
+int iniciar_cidade_svg(const char *caminho_svg, Cidade cidade)
+{
+    return iniciar_mapa_svg(caminho_svg, cidade, NULL);
 }
 
 int finalizar_svg(const char *caminho_svg)
