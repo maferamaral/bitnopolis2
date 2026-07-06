@@ -101,7 +101,7 @@ static struct item_aresta_minima *coletar_arestas(Grafo grafo, int *quantidade_c
     return arestas;
 }
 
-int expandir_infraestrutura_arvore_minima(Grafo grafo, double limite_velocidade)
+int expandir_infraestrutura_arvore_minima_com_arestas(Grafo grafo, double limite_velocidade, ArestaGrafo *arestas_expandidas, int capacidade)
 {
     struct item_aresta_minima *arestas;
     int *pais;
@@ -137,6 +137,9 @@ int expandir_infraestrutura_arvore_minima(Grafo grafo, double limite_velocidade)
             selecionadas++;
             if (velocidade < limite_velocidade) {
                 definir_velocidade_aresta_grafo(arestas[i].aresta, velocidade * 1.5);
+                if (arestas_expandidas != NULL && expandidas < capacidade) {
+                    arestas_expandidas[expandidas] = arestas[i].aresta;
+                }
                 expandidas++;
             }
         }
@@ -145,4 +148,9 @@ int expandir_infraestrutura_arvore_minima(Grafo grafo, double limite_velocidade)
     free(pais);
     free(arestas);
     return expandidas;
+}
+
+int expandir_infraestrutura_arvore_minima(Grafo grafo, double limite_velocidade)
+{
+    return expandir_infraestrutura_arvore_minima_com_arestas(grafo, limite_velocidade, NULL, 0);
 }

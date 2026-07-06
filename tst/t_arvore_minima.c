@@ -44,6 +44,22 @@ void test_deve_expandir_arestas_lentas_da_arvore_minima(void)
     destruir_grafo(grafo);
 }
 
+void test_deve_informar_arestas_expandidas(void)
+{
+    Grafo grafo = criar_grafo_arvore();
+    VerticeGrafo a = buscar_vertice_grafo(grafo, "A");
+    VerticeGrafo c = buscar_vertice_grafo(grafo, "C");
+    ArestaGrafo ab = obter_aresta_vertice_grafo(a, 0);
+    ArestaGrafo cd = obter_aresta_vertice_grafo(c, 0);
+    ArestaGrafo expandidas[4];
+
+    TEST_ASSERT_EQUAL_INT(2, expandir_infraestrutura_arvore_minima_com_arestas(grafo, 5.0, expandidas, 4));
+    TEST_ASSERT_EQUAL_PTR(ab, expandidas[0]);
+    TEST_ASSERT_EQUAL_PTR(cd, expandidas[1]);
+
+    destruir_grafo(grafo);
+}
+
 void test_deve_ignorar_aresta_lenta_fora_da_arvore_minima(void)
 {
     Grafo grafo = criar_grafo_arvore();
@@ -65,6 +81,7 @@ int main(void)
 {
     UNITY_BEGIN();
     RUN_TEST(test_deve_expandir_arestas_lentas_da_arvore_minima);
+    RUN_TEST(test_deve_informar_arestas_expandidas);
     RUN_TEST(test_deve_ignorar_aresta_lenta_fora_da_arvore_minima);
     RUN_TEST(test_deve_rejeitar_entradas_invalidas_arvore_minima);
     return UNITY_END();

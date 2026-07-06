@@ -380,6 +380,50 @@ int acrescentar_componentes_svg(const char *caminho_svg, Grafo grafo, Componente
     return 1;
 }
 
+int acrescentar_arestas_expandidas_svg(const char *caminho_svg, ArestaGrafo *arestas, int quantidade)
+{
+    FILE *arquivo;
+    int i;
+
+    if (caminho_svg == NULL || quantidade < 0 || (quantidade > 0 && arestas == NULL)) {
+        return 0;
+    }
+
+    if (quantidade == 0) {
+        return 1;
+    }
+
+    arquivo = fopen(caminho_svg, "a");
+    if (arquivo == NULL) {
+        return 0;
+    }
+
+    fprintf(arquivo, "  <g id=\"arestas_expandidas\" fill=\"none\" stroke=\"red\" stroke-width=\"4.00\" stroke-linecap=\"round\">\n");
+    for (i = 0; i < quantidade; i++) {
+        VerticeGrafo origem;
+        VerticeGrafo destino;
+
+        if (arestas[i] == NULL) {
+            continue;
+        }
+
+        origem = obter_origem_aresta_grafo(arestas[i]);
+        destino = obter_destino_aresta_grafo(arestas[i]);
+        fprintf(
+            arquivo,
+            "    <line x1=\"%.2f\" y1=\"%.2f\" x2=\"%.2f\" y2=\"%.2f\" />\n",
+            obter_x_vertice_grafo(origem),
+            obter_y_vertice_grafo(origem),
+            obter_x_vertice_grafo(destino),
+            obter_y_vertice_grafo(destino)
+        );
+    }
+    fprintf(arquivo, "  </g>\n");
+
+    fclose(arquivo);
+    return 1;
+}
+
 int acrescentar_percurso_svg(const char *caminho_svg, ResultadoDijkstra resultado, const char *cor, const char *id, int animar)
 {
     FILE *arquivo;

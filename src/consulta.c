@@ -9,6 +9,7 @@
 #include "saida_svg.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #define TAMANHO_LINHA_CONSULTA 512
 #define TAMANHO_TEXTO_CONSULTA 128
@@ -215,17 +216,29 @@ static int processar_comando_regs(const char *linha, Grafo grafo, FILE *saida, c
     return sucesso && fprintf(saida, "regs %.2f -> Numero de componentes conexos: %d\n", limite_velocidade, quantidade) >= 0;
 }
 
-static int processar_comando_exp(const char *linha, Grafo grafo, FILE *saida)
+static int processar_comando_exp(const char *linha, Grafo grafo, FILE *saida, const char *caminho_svg)
 {
     double limite_velocidade;
+    ArestaGrafo *arestas_expandidas;
+    int capacidade;
     int expandidas;
+    int sucesso;
 
     if (sscanf(linha, "exp %lf", &limite_velocidade) != 1) {
         return 1;
     }
 
-    expandidas = expandir_infraestrutura_arvore_minima(grafo, limite_velocidade);
-    return fprintf(saida, "exp %.2f -> %d aresta(s) expandida(s)\n", limite_velocidade, expandidas) >= 0;
+    capacidade = obter_quantidade_arestas_grafo(grafo);
+    arestas_expandidas = malloc((size_t) capacidade * sizeof(*arestas_expandidas));
+    if (arestas_expandidas == NULL && capacidade > 0) {
+        return 0;
+    }
+
+    expandidas = expandir_infraestrutura_arvore_minima_com_arestas(grafo, limite_velocidade, arestas_expandidas, capacidade);
+    sucesso = acrescentar_arestas_expandidas_svg(caminho_svg, arestas_expandidas, expandidas);
+    free(arestas_expandidas);
+
+    return sucesso && fprintf(saida, "exp %.2f -> %d aresta(s) expandida(s)\n", limite_velocidade, expandidas) >= 0;
 }
 
 int processar_arquivo_consulta(const char *caminho_qry, Cidade cidade, Grafo grafo, const char *caminho_txt, const char *caminho_svg)
@@ -269,7 +282,7 @@ int processar_arquivo_consulta(const char *caminho_qry, Cidade cidade, Grafo gra
         } else if (linha[0] == 'r' && linha[1] == 'e' && linha[2] == 'g' && linha[3] == 's') {
             sucesso = processar_comando_regs(linha, grafo, saida, caminho_svg);
         } else if (linha[0] == 'e' && linha[1] == 'x' && linha[2] == 'p') {
-            sucesso = processar_comando_exp(linha, grafo, saida);
+            sucesso = processar_comando_exp(linha, grafo, saida, caminho_svg);
         }
     }
 

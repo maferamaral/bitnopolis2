@@ -204,6 +204,9 @@ void test_deve_processar_exp_e_expandir_arestas(void)
 
     TEST_ASSERT_EQUAL_INT(1, processar_arquivo_consulta(CAMINHO_QRY_TESTE, cidade, grafo, CAMINHO_TXT_TESTE, CAMINHO_SVG_TESTE));
     TEST_ASSERT_EQUAL_INT(1, arquivo_txt_contem("exp 5.00 -> 2 aresta(s) expandida(s)"));
+    TEST_ASSERT_EQUAL_INT(1, arquivo_svg_contem("id=\"arestas_expandidas\""));
+    TEST_ASSERT_EQUAL_INT(1, arquivo_svg_contem("stroke=\"red\""));
+    TEST_ASSERT_EQUAL_INT(1, arquivo_svg_contem("stroke-width=\"4.00\""));
     TEST_ASSERT_FLOAT_WITHIN(0.0001, 1.5, obter_velocidade_aresta_grafo(aresta));
 
     destruir_grafo(grafo);
