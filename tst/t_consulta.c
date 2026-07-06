@@ -111,11 +111,11 @@ void test_deve_processar_origem_geografica_e_percurso(void)
     TEST_ASSERT_EQUAL_INT(1, arquivo_txt_contem("@o? R1 cep2 L 0.00 -> (20.00, 0.00)"));
     TEST_ASSERT_EQUAL_INT(1, arquivo_txt_contem("p? R0 R1"));
     TEST_ASSERT_EQUAL_INT(1, arquivo_txt_contem("Percurso mais curto: custo 20.00"));
-    TEST_ASSERT_EQUAL_INT(1, arquivo_txt_contem("Siga pela Rua_AB de A ate B."));
-    TEST_ASSERT_EQUAL_INT(1, arquivo_txt_contem("Siga pela Rua_BD de B ate D."));
+    TEST_ASSERT_EQUAL_INT(1, arquivo_txt_contem("Siga na direcao leste pela Rua_AB ate B."));
+    TEST_ASSERT_EQUAL_INT(1, arquivo_txt_contem("Siga em frente na direcao leste pela Rua_BD ate D."));
     TEST_ASSERT_EQUAL_INT(1, arquivo_txt_contem("Percurso mais rapido: custo 2.00"));
-    TEST_ASSERT_EQUAL_INT(1, arquivo_txt_contem("Siga pela Rua_AC de A ate C."));
-    TEST_ASSERT_EQUAL_INT(1, arquivo_txt_contem("Siga pela Rua_CD de C ate D."));
+    TEST_ASSERT_EQUAL_INT(1, arquivo_txt_contem("Siga na direcao norte pela Rua_AC ate C."));
+    TEST_ASSERT_EQUAL_INT(1, arquivo_txt_contem("Vire a direita na direcao leste pela Rua_CD ate D."));
     TEST_ASSERT_EQUAL_INT(1, arquivo_svg_contem("id=\"registrador_R0\""));
     TEST_ASSERT_EQUAL_INT(1, arquivo_svg_contem("id=\"registrador_R1\""));
     TEST_ASSERT_EQUAL_INT(1, arquivo_svg_contem("stroke=\"red\""));

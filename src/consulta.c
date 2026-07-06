@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define TAMANHO_LINHA_CONSULTA 512
 #define TAMANHO_TEXTO_CONSULTA 128
@@ -35,10 +36,75 @@ static int obter_indice_registrador(const char *texto)
     return -1;
 }
 
+static const char *obter_direcao_segmento(VerticeGrafo origem, VerticeGrafo destino)
+{
+    double dx;
+    double dy;
+
+    if (origem == NULL || destino == NULL) {
+        return "desconhecida";
+    }
+
+    dx = obter_x_vertice_grafo(destino) - obter_x_vertice_grafo(origem);
+    dy = obter_y_vertice_grafo(destino) - obter_y_vertice_grafo(origem);
+
+    if (dx < 0.0) {
+        dx = -dx;
+    }
+    if (dy < 0.0) {
+        dy = -dy;
+    }
+
+    if (dx >= dy) {
+        return obter_x_vertice_grafo(destino) >= obter_x_vertice_grafo(origem) ? "leste" : "oeste";
+    }
+
+    return obter_y_vertice_grafo(destino) >= obter_y_vertice_grafo(origem) ? "norte" : "sul";
+}
+
+static const char *obter_movimento_segmento(VerticeGrafo anterior, VerticeGrafo atual, VerticeGrafo proximo, const char *rua_anterior, const char *rua_atual)
+{
+    double ax;
+    double ay;
+    double bx;
+    double by;
+    double produto_vetorial;
+    double produto_escalar;
+
+    if (anterior == NULL || atual == NULL || proximo == NULL) {
+        return "Siga";
+    }
+
+    ax = obter_x_vertice_grafo(atual) - obter_x_vertice_grafo(anterior);
+    ay = obter_y_vertice_grafo(atual) - obter_y_vertice_grafo(anterior);
+    bx = obter_x_vertice_grafo(proximo) - obter_x_vertice_grafo(atual);
+    by = obter_y_vertice_grafo(proximo) - obter_y_vertice_grafo(atual);
+    produto_vetorial = ax * by - ay * bx;
+    produto_escalar = ax * bx + ay * by;
+
+    if (produto_escalar > 0.0 && produto_vetorial > -0.0001 && produto_vetorial < 0.0001) {
+        if (rua_anterior != NULL && rua_atual != NULL && strcmp(rua_anterior, rua_atual) == 0) {
+            return "Continue";
+        }
+        return "Siga em frente";
+    }
+
+    if (produto_vetorial > 0.0) {
+        return "Vire a esquerda";
+    }
+
+    if (produto_vetorial < 0.0) {
+        return "Vire a direita";
+    }
+
+    return "Retorne";
+}
+
 static int escrever_caminho_dijkstra(FILE *arquivo, ResultadoDijkstra resultado)
 {
     int i;
     int quantidade = obter_quantidade_vertices_dijkstra(resultado);
+    const char *rua_anterior = NULL;
 
     if (quantidade <= 1) {
         return escrever_linha_formatada(arquivo, "Origem e destino coincidem.");
@@ -49,20 +115,23 @@ static int escrever_caminho_dijkstra(FILE *arquivo, ResultadoDijkstra resultado)
         VerticeGrafo destino = obter_vertice_dijkstra(resultado, i + 1);
         ArestaGrafo aresta = buscar_aresta_entre_vertices_grafo(origem, destino);
         const char *nome_rua = obter_nome_aresta_grafo(aresta);
+        const char *direcao = obter_direcao_segmento(origem, destino);
+        const char *movimento = "Siga";
 
         if (nome_rua == NULL) {
             nome_rua = "via desconhecida";
         }
 
-        if (fprintf(
-            arquivo,
-            "Siga pela %s de %s ate %s.\n",
-            nome_rua,
-            obter_id_vertice_grafo(origem),
-            obter_id_vertice_grafo(destino)
-        ) < 0) {
+        if (i > 0) {
+            VerticeGrafo anterior = obter_vertice_dijkstra(resultado, i - 1);
+            movimento = obter_movimento_segmento(anterior, origem, destino, rua_anterior, nome_rua);
+        }
+
+        if (fprintf(arquivo, "%s na direcao %s pela %s ate %s.\n", movimento, direcao, nome_rua, obter_id_vertice_grafo(destino)) < 0) {
             return 0;
         }
+
+        rua_anterior = nome_rua;
     }
 
     return 1;
