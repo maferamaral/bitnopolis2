@@ -106,7 +106,8 @@ void test_deve_desenhar_componentes_regs_com_bounding_box_exato(void)
     TEST_ASSERT_NOT_NULL(grafo);
     TEST_ASSERT_EQUAL_INT(1, inserir_vertice_grafo(grafo, "A", 10.0, 20.0));
     TEST_ASSERT_EQUAL_INT(1, inserir_vertice_grafo(grafo, "B", 40.0, 80.0));
-    TEST_ASSERT_EQUAL_INT(1, inserir_aresta_grafo(grafo, "A", "B", "-", "-", 50.0, 3.0, "Rua_AB"));
+    TEST_ASSERT_EQUAL_INT(1, inserir_aresta_grafo(grafo, "A", "B", "-", "-", 50.0, 6.0, "Rua_AB"));
+    TEST_ASSERT_EQUAL_INT(1, inserir_aresta_grafo(grafo, "B", "A", "-", "-", 50.0, 6.0, "Rua_BA"));
 
     componentes = calcular_componentes_lentas(grafo, 5.0);
     TEST_ASSERT_NOT_NULL(componentes);
