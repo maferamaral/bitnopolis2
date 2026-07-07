@@ -96,6 +96,33 @@ void test_deve_desenhar_registrador_ate_o_topo_do_svg(void)
     destruir_cidade(cidade);
 }
 
+void test_deve_desenhar_componentes_regs_com_bounding_box_exato(void)
+{
+    Cidade cidade = criar_cidade();
+    Grafo grafo = criar_grafo();
+    Componentes componentes;
+
+    TEST_ASSERT_NOT_NULL(cidade);
+    TEST_ASSERT_NOT_NULL(grafo);
+    TEST_ASSERT_EQUAL_INT(1, inserir_vertice_grafo(grafo, "A", 10.0, 20.0));
+    TEST_ASSERT_EQUAL_INT(1, inserir_vertice_grafo(grafo, "B", 40.0, 80.0));
+    TEST_ASSERT_EQUAL_INT(1, inserir_aresta_grafo(grafo, "A", "B", "-", "-", 50.0, 3.0, "Rua_AB"));
+
+    componentes = calcular_componentes_lentas(grafo, 5.0);
+    TEST_ASSERT_NOT_NULL(componentes);
+    TEST_ASSERT_EQUAL_INT(1, iniciar_mapa_svg(CAMINHO_SVG_TESTE, cidade, grafo));
+    TEST_ASSERT_EQUAL_INT(1, acrescentar_componentes_svg(CAMINHO_SVG_TESTE, grafo, componentes));
+    TEST_ASSERT_EQUAL_INT(1, finalizar_svg(CAMINHO_SVG_TESTE));
+
+    TEST_ASSERT_EQUAL_INT(1, arquivo_contem_svg("id=\"componentes_regs\""));
+    TEST_ASSERT_EQUAL_INT(1, arquivo_contem_svg("x=\"10.00\" y=\"20.00\" width=\"30.00\" height=\"60.00\""));
+    TEST_ASSERT_EQUAL_INT(1, arquivo_contem_svg("fill-opacity=\"0.50\""));
+
+    destruir_componentes(componentes);
+    destruir_grafo(grafo);
+    destruir_cidade(cidade);
+}
+
 void test_deve_rejeitar_entradas_invalidas_svg(void)
 {
     Cidade cidade = criar_cidade();
@@ -113,6 +140,7 @@ int main(void)
     RUN_TEST(test_deve_escrever_svg_com_quadras);
     RUN_TEST(test_deve_escrever_svg_com_grafo_viario);
     RUN_TEST(test_deve_desenhar_registrador_ate_o_topo_do_svg);
+    RUN_TEST(test_deve_desenhar_componentes_regs_com_bounding_box_exato);
     RUN_TEST(test_deve_rejeitar_entradas_invalidas_svg);
     return UNITY_END();
 }

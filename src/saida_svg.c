@@ -375,7 +375,6 @@ int acrescentar_componentes_svg(const char *caminho_svg, Grafo grafo, Componente
 
     fprintf(arquivo, "  <g id=\"componentes_regs\">\n");
     for (i = 0; i < quantidade_componentes; i++) {
-        double margem = 5.0;
         double largura;
         double altura;
 
@@ -383,21 +382,15 @@ int acrescentar_componentes_svg(const char *caminho_svg, Grafo grafo, Componente
             continue;
         }
 
-        largura = max_x[i] - min_x[i] + 2.0 * margem;
-        altura = max_y[i] - min_y[i] + 2.0 * margem;
-        if (largura < 2.0 * margem) {
-            largura = 2.0 * margem;
-        }
-        if (altura < 2.0 * margem) {
-            altura = 2.0 * margem;
-        }
+        largura = max_x[i] - min_x[i];
+        altura = max_y[i] - min_y[i];
 
         fprintf(
             arquivo,
             "    <rect id=\"componente_%d\" x=\"%.2f\" y=\"%.2f\" width=\"%.2f\" height=\"%.2f\" fill=\"%s\" fill-opacity=\"0.50\" stroke=\"%s\" stroke-width=\"1.50\" />\n",
             i,
-            min_x[i] - margem,
-            min_y[i] - margem,
+            min_x[i],
+            min_y[i],
             largura,
             altura,
             cores[i % (int) (sizeof(cores) / sizeof(cores[0]))],
