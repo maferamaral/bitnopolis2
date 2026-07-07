@@ -79,6 +79,23 @@ void test_deve_escrever_svg_com_grafo_viario(void)
     destruir_cidade(cidade);
 }
 
+void test_deve_desenhar_registrador_ate_o_topo_do_svg(void)
+{
+    Cidade cidade = criar_cidade();
+
+    TEST_ASSERT_NOT_NULL(cidade);
+    TEST_ASSERT_EQUAL_INT(1, iniciar_mapa_svg(CAMINHO_SVG_TESTE, cidade, NULL));
+    TEST_ASSERT_EQUAL_INT(1, acrescentar_registrador_svg(CAMINHO_SVG_TESTE, 0, 50.0, 80.0));
+    TEST_ASSERT_EQUAL_INT(1, finalizar_svg(CAMINHO_SVG_TESTE));
+
+    TEST_ASSERT_EQUAL_INT(1, arquivo_contem_svg("id=\"registrador_R0\""));
+    TEST_ASSERT_EQUAL_INT(1, arquivo_contem_svg("x1=\"50.00\" y1=\"80.00\" x2=\"50.00\" y2=\"-10.00\""));
+    TEST_ASSERT_EQUAL_INT(1, arquivo_contem_svg("x=\"50.00\" y=\"-2.00\""));
+    TEST_ASSERT_EQUAL_INT(1, arquivo_contem_svg(">R0<"));
+
+    destruir_cidade(cidade);
+}
+
 void test_deve_rejeitar_entradas_invalidas_svg(void)
 {
     Cidade cidade = criar_cidade();
@@ -95,6 +112,7 @@ int main(void)
     UNITY_BEGIN();
     RUN_TEST(test_deve_escrever_svg_com_quadras);
     RUN_TEST(test_deve_escrever_svg_com_grafo_viario);
+    RUN_TEST(test_deve_desenhar_registrador_ate_o_topo_do_svg);
     RUN_TEST(test_deve_rejeitar_entradas_invalidas_svg);
     return UNITY_END();
 }

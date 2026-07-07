@@ -67,6 +67,26 @@ static int arquivo_svg_contem(const char *trecho)
     return 0;
 }
 
+static int contar_ocorrencias_svg(const char *trecho)
+{
+    FILE *arquivo = fopen(CAMINHO_SVG_TESTE, "r");
+    char linha[512];
+    int quantidade = 0;
+
+    TEST_ASSERT_NOT_NULL(arquivo);
+    while (fgets(linha, sizeof(linha), arquivo) != NULL) {
+        char *posicao = linha;
+
+        while ((posicao = strstr(posicao, trecho)) != NULL) {
+            quantidade++;
+            posicao += strlen(trecho);
+        }
+    }
+
+    fclose(arquivo);
+    return quantidade;
+}
+
 static Cidade criar_cidade_consulta(void)
 {
     Cidade cidade = criar_cidade();
@@ -126,7 +146,7 @@ void test_deve_processar_origem_geografica_e_percurso(void)
     TEST_ASSERT_EQUAL_INT(1, arquivo_svg_contem("stroke=\"red\""));
     TEST_ASSERT_EQUAL_INT(1, arquivo_svg_contem("id=\"percurso_rapido_1\""));
     TEST_ASSERT_EQUAL_INT(1, arquivo_svg_contem("stroke=\"blue\""));
-    TEST_ASSERT_EQUAL_INT(1, arquivo_svg_contem("animateMotion"));
+    TEST_ASSERT_EQUAL_INT(2, contar_ocorrencias_svg("<animateMotion "));
     TEST_ASSERT_EQUAL_INT(1, arquivo_svg_contem(">I<"));
     TEST_ASSERT_EQUAL_INT(1, arquivo_svg_contem(">F<"));
 

@@ -1,1 +1,5 @@
-
+t2/*
+out/*
+src/*.o
+src/ted
+tst/*_run

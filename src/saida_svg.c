@@ -95,6 +95,36 @@ static void calcular_limites_mapa(Cidade cidade, Grafo grafo, double *min_x, dou
     }
 }
 
+static int obter_topo_svg(const char *caminho_svg, double *topo)
+{
+    FILE *arquivo;
+    char linha[512];
+    double min_x;
+    double min_y;
+    double largura;
+    double altura;
+
+    if (caminho_svg == NULL || topo == NULL) {
+        return 0;
+    }
+
+    arquivo = fopen(caminho_svg, "r");
+    if (arquivo == NULL) {
+        return 0;
+    }
+
+    while (fgets(linha, sizeof(linha), arquivo) != NULL) {
+        if (sscanf(linha, "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"%lf %lf %lf %lf\"", &min_x, &min_y, &largura, &altura) == 4) {
+            *topo = min_y;
+            fclose(arquivo);
+            return 1;
+        }
+    }
+
+    fclose(arquivo);
+    return 0;
+}
+
 static void escrever_quadra_svg(FILE *arquivo, Quadra quadra)
 {
     double x = obter_x_quadra(quadra) - obter_largura_quadra(quadra);
@@ -236,9 +266,14 @@ int escrever_cidade_svg(const char *caminho_svg, Cidade cidade)
 int acrescentar_registrador_svg(const char *caminho_svg, int indice, double x, double y)
 {
     FILE *arquivo;
+    double topo;
 
     if (caminho_svg == NULL || indice < 0) {
         return 0;
+    }
+
+    if (!obter_topo_svg(caminho_svg, &topo)) {
+        topo = y - 20.0;
     }
 
     arquivo = fopen(caminho_svg, "a");
@@ -251,15 +286,15 @@ int acrescentar_registrador_svg(const char *caminho_svg, int indice, double x, d
         arquivo,
         "    <line x1=\"%.2f\" y1=\"%.2f\" x2=\"%.2f\" y2=\"%.2f\" stroke=\"red\" stroke-width=\"1.50\" stroke-dasharray=\"4 3\" />\n",
         x,
-        y - 20.0,
+        y,
         x,
-        y + 20.0
+        topo
     );
     fprintf(
         arquivo,
         "    <text x=\"%.2f\" y=\"%.2f\" text-anchor=\"middle\" font-size=\"8\" fill=\"red\">R%d</text>\n",
         x,
-        y - 23.0,
+        topo + 8.0,
         indice
     );
     fprintf(arquivo, "  </g>\n");

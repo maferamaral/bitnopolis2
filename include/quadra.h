@@ -1,13 +1,16 @@
 #ifndef QUADRA_H
 #define QUADRA_H
 
+/* Quadra retangular identificada por CEP e atributos graficos do SVG. */
 typedef void *Quadra;
 
 Quadra criar_quadra(const char *cep, double x, double y, double largura, double altura);
 void destruir_quadra(Quadra quadra);
 
+/* Define espessura, preenchimento e borda usados na renderizacao. */
 void definir_estilo_quadra(Quadra quadra, double espessura, const char *preenchimento, const char *borda);
 
+/* Acesso aos dados geometricos e visuais da quadra. */
 const char *obter_cep_quadra(Quadra quadra);
 double obter_x_quadra(Quadra quadra);
 double obter_y_quadra(Quadra quadra);

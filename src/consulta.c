@@ -229,7 +229,7 @@ static int processar_comando_percurso(const char *linha, Grafo grafo, Registrado
     snprintf(id_rapido, sizeof(id_rapido), "percurso_rapido_%d", *numero_percurso);
     (*numero_percurso)++;
     sucesso = sucesso && acrescentar_percurso_svg(caminho_svg, obter_percurso_curto(percurso), cor_curto, id_curto, 1);
-    sucesso = sucesso && acrescentar_percurso_svg(caminho_svg, obter_percurso_rapido(percurso), cor_rapido, id_rapido, 0);
+    sucesso = sucesso && acrescentar_percurso_svg(caminho_svg, obter_percurso_rapido(percurso), cor_rapido, id_rapido, 1);
     sucesso = sucesso && acrescentar_marcadores_percurso_svg(caminho_svg, obter_percurso_curto(percurso));
 
     destruir_percurso(percurso);

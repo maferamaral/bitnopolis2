@@ -1,6 +1,7 @@
 #ifndef GRAFO_H
 #define GRAFO_H
 
+/* Grafo direcionado do sistema viario, com vertices e arestas opacos. */
 typedef void *Grafo;
 typedef void *VerticeGrafo;
 typedef void *ArestaGrafo;
@@ -8,6 +9,7 @@ typedef void *ArestaGrafo;
 Grafo criar_grafo(void);
 void destruir_grafo(Grafo grafo);
 
+/* Insere vertices por id e arestas direcionadas com atributos viarios. */
 int inserir_vertice_grafo(Grafo grafo, const char *id, double x, double y);
 int inserir_aresta_grafo(
     Grafo grafo,
@@ -20,21 +22,25 @@ int inserir_aresta_grafo(
     const char *nome
 );
 
+/* Buscas e acesso por indice preservam os ponteiros internos do grafo. */
 VerticeGrafo buscar_vertice_grafo(Grafo grafo, const char *id);
 VerticeGrafo buscar_vertice_mais_proximo_grafo(Grafo grafo, double x, double y);
 VerticeGrafo obter_vertice_grafo(Grafo grafo, int indice);
 ArestaGrafo obter_aresta_vertice_grafo(VerticeGrafo vertice, int indice);
 ArestaGrafo buscar_aresta_entre_vertices_grafo(VerticeGrafo origem, VerticeGrafo destino);
 
+/* Consultas globais e atualizacao regional de velocidade media. */
 int obter_quantidade_vertices_grafo(Grafo grafo);
 int obter_quantidade_arestas_grafo(Grafo grafo);
 int obter_grau_saida_vertice_grafo(VerticeGrafo vertice);
 int atualizar_velocidade_arestas_regiao_grafo(Grafo grafo, double x, double y, double largura, double altura, double velocidade_media);
 
+/* Atributos de vertices. */
 const char *obter_id_vertice_grafo(VerticeGrafo vertice);
 double obter_x_vertice_grafo(VerticeGrafo vertice);
 double obter_y_vertice_grafo(VerticeGrafo vertice);
 
+/* Atributos e mutacao controlada de arestas. */
 VerticeGrafo obter_origem_aresta_grafo(ArestaGrafo aresta);
 VerticeGrafo obter_destino_aresta_grafo(ArestaGrafo aresta);
 const char *obter_cep_direita_aresta_grafo(ArestaGrafo aresta);

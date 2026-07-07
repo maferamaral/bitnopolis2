@@ -2,6 +2,8 @@
 
 #include "quadra.h"
 
+#include <stdlib.h>
+#include <string.h>
 #include <stdio.h>
 
 #define TAMANHO_LINHA 512
@@ -23,10 +25,17 @@ static void iniciar_estilo(struct estilo_geo *estilo)
 static int ler_comando_cq(const char *linha, struct estilo_geo *estilo)
 {
     double espessura;
+    char texto_espessura[TAMANHO_TEXTO];
+    char *fim_numero;
     char preenchimento[TAMANHO_TEXTO];
     char borda[TAMANHO_TEXTO];
 
-    if (sscanf(linha, "cq %lf %127s %127s", &espessura, preenchimento, borda) != 3) {
+    if (sscanf(linha, "cq %127s %127s %127s", texto_espessura, preenchimento, borda) != 3) {
+        return 0;
+    }
+
+    espessura = strtod(texto_espessura, &fim_numero);
+    if (fim_numero == texto_espessura || (*fim_numero != '\0' && strcmp(fim_numero, "px") != 0)) {
         return 0;
     }
 

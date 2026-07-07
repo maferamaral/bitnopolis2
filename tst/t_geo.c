@@ -86,6 +86,28 @@ void test_deve_aplicar_estilo_cq_nas_quadras_seguintes(void)
     destruir_cidade(cidade);
 }
 
+void test_deve_ler_espessura_cq_com_px_sem_quebrar_cores(void)
+{
+    Cidade cidade;
+    Quadra quadra;
+
+    escrever_geo(
+        "cq 1.0px Moccasin dodgerblue\n"
+        "q cep1 10 20 30 40\n"
+    );
+
+    cidade = ler_arquivo_geo(CAMINHO_GEO_TESTE);
+    TEST_ASSERT_NOT_NULL(cidade);
+
+    quadra = buscar_quadra_cidade(cidade, "cep1");
+    TEST_ASSERT_NOT_NULL(quadra);
+    TEST_ASSERT_FLOAT_WITHIN(0.0001, 1.0, obter_espessura_quadra(quadra));
+    TEST_ASSERT_EQUAL_STRING("Moccasin", obter_preenchimento_quadra(quadra));
+    TEST_ASSERT_EQUAL_STRING("dodgerblue", obter_borda_quadra(quadra));
+
+    destruir_cidade(cidade);
+}
+
 void test_deve_ignorar_linhas_desconhecidas(void)
 {
     Cidade cidade;
@@ -112,6 +134,7 @@ int main(void)
     UNITY_BEGIN();
     RUN_TEST(test_deve_ler_quadras_do_geo);
     RUN_TEST(test_deve_aplicar_estilo_cq_nas_quadras_seguintes);
+    RUN_TEST(test_deve_ler_espessura_cq_com_px_sem_quebrar_cores);
     RUN_TEST(test_deve_ignorar_linhas_desconhecidas);
     RUN_TEST(test_deve_retornar_nulo_para_arquivo_inexistente);
     return UNITY_END();
