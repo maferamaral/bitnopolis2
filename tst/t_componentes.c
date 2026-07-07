@@ -43,6 +43,8 @@ void test_deve_calcular_componentes_apos_desabilitar_arestas_lentas(void)
 
     TEST_ASSERT_NOT_NULL(componentes);
     TEST_ASSERT_EQUAL_INT(3, obter_quantidade_componentes(componentes));
+    TEST_ASSERT_EQUAL_INT(1, obter_quantidade_componentes_unico_vertice(componentes));
+    TEST_ASSERT_EQUAL_INT(2, obter_quantidade_componentes_multiplos_vertices(componentes));
 
     componente_a = obter_componente_vertice(componentes, buscar_vertice_grafo(grafo, "A"));
     componente_b = obter_componente_vertice(componentes, buscar_vertice_grafo(grafo, "B"));
@@ -70,6 +72,8 @@ void test_deve_manter_componentes_quando_nao_ha_arestas_lentas(void)
 
     TEST_ASSERT_NOT_NULL(componentes);
     TEST_ASSERT_EQUAL_INT(2, obter_quantidade_componentes(componentes));
+    TEST_ASSERT_EQUAL_INT(1, obter_quantidade_componentes_unico_vertice(componentes));
+    TEST_ASSERT_EQUAL_INT(1, obter_quantidade_componentes_multiplos_vertices(componentes));
     TEST_ASSERT_TRUE(obter_componente_vertice(componentes, buscar_vertice_grafo(grafo, "A")) >= 0);
 
     destruir_componentes(componentes);
@@ -80,6 +84,8 @@ void test_deve_rejeitar_entradas_invalidas_componentes(void)
 {
     TEST_ASSERT_NULL(calcular_componentes_lentas(NULL, 5.0));
     TEST_ASSERT_EQUAL_INT(0, obter_quantidade_componentes(NULL));
+    TEST_ASSERT_EQUAL_INT(0, obter_quantidade_componentes_unico_vertice(NULL));
+    TEST_ASSERT_EQUAL_INT(0, obter_quantidade_componentes_multiplos_vertices(NULL));
     TEST_ASSERT_EQUAL_INT(-1, obter_componente_vertice(NULL, NULL));
 }
 

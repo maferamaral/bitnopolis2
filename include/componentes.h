@@ -12,6 +12,8 @@ void destruir_componentes(Componentes componentes);
 
 /* Componentes sao numerados a partir de 0; vertices fora do grafo retornam -1. */
 int obter_quantidade_componentes(Componentes componentes);
+int obter_quantidade_componentes_unico_vertice(Componentes componentes);
+int obter_quantidade_componentes_multiplos_vertices(Componentes componentes);
 int obter_componente_vertice(Componentes componentes, VerticeGrafo vertice);
 
 #endif

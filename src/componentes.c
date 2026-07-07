@@ -5,6 +5,7 @@
 struct componentes {
     Grafo grafo;
     int *componente_por_vertice;
+    int *tamanho_por_componente;
     int quantidade_vertices;
     int quantidade_componentes;
 };
@@ -81,14 +82,17 @@ static void liberar_contexto(struct contexto_componentes *contexto)
 static void desempilhar_componente(struct contexto_componentes *contexto, int indice_raiz)
 {
     int indice;
+    int tamanho = 0;
 
     do {
         contexto->topo_pilha--;
         indice = contexto->pilha[contexto->topo_pilha];
         contexto->esta_na_pilha[indice] = 0;
         contexto->componentes->componente_por_vertice[indice] = contexto->componentes->quantidade_componentes;
+        tamanho++;
     } while (indice != indice_raiz && contexto->topo_pilha > 0);
 
+    contexto->componentes->tamanho_por_componente[contexto->componentes->quantidade_componentes] = tamanho;
     contexto->componentes->quantidade_componentes++;
 }
 
@@ -153,7 +157,8 @@ Componentes calcular_componentes_lentas(Grafo grafo, double limite_velocidade)
     componentes->grafo = grafo;
     componentes->quantidade_vertices = quantidade_vertices;
     componentes->componente_por_vertice = malloc((size_t) quantidade_vertices * sizeof(*componentes->componente_por_vertice));
-    if (componentes->componente_por_vertice == NULL || !inicializar_contexto(&contexto, componentes, limite_velocidade)) {
+    componentes->tamanho_por_componente = calloc((size_t) quantidade_vertices, sizeof(*componentes->tamanho_por_componente));
+    if (componentes->componente_por_vertice == NULL || componentes->tamanho_por_componente == NULL || !inicializar_contexto(&contexto, componentes, limite_velocidade)) {
         destruir_componentes(componentes);
         return NULL;
     }
@@ -177,6 +182,7 @@ void destruir_componentes(Componentes componentes_generico)
     }
 
     free(componentes->componente_por_vertice);
+    free(componentes->tamanho_por_componente);
     free(componentes);
 }
 
@@ -189,6 +195,44 @@ int obter_quantidade_componentes(Componentes componentes_generico)
     }
 
     return componentes->quantidade_componentes;
+}
+
+int obter_quantidade_componentes_unico_vertice(Componentes componentes_generico)
+{
+    struct componentes *componentes = componentes_generico;
+    int quantidade = 0;
+    int i;
+
+    if (componentes == NULL) {
+        return 0;
+    }
+
+    for (i = 0; i < componentes->quantidade_componentes; i++) {
+        if (componentes->tamanho_por_componente[i] == 1) {
+            quantidade++;
+        }
+    }
+
+    return quantidade;
+}
+
+int obter_quantidade_componentes_multiplos_vertices(Componentes componentes_generico)
+{
+    struct componentes *componentes = componentes_generico;
+    int quantidade = 0;
+    int i;
+
+    if (componentes == NULL) {
+        return 0;
+    }
+
+    for (i = 0; i < componentes->quantidade_componentes; i++) {
+        if (componentes->tamanho_por_componente[i] > 1) {
+            quantidade++;
+        }
+    }
+
+    return quantidade;
 }
 
 int obter_componente_vertice(Componentes componentes_generico, VerticeGrafo vertice)

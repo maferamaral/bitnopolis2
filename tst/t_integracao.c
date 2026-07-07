@@ -100,7 +100,7 @@ void test_deve_executar_programa_com_geo_via_qry(void)
     TEST_ASSERT_EQUAL_INT(1, arquivo_contem(CAMINHO_TXT, "@o? R0 cep1 L 0.00 -> (0.00, 0.00)"));
     TEST_ASSERT_EQUAL_INT(1, arquivo_contem(CAMINHO_TXT, "Percurso mais curto: custo 20.00"));
     TEST_ASSERT_EQUAL_INT(1, arquivo_contem(CAMINHO_TXT, "Siga na direcao leste pela Rua_AB ate B."));
-    TEST_ASSERT_EQUAL_INT(1, arquivo_contem(CAMINHO_TXT, "regs 5.00 -> Numero de componentes conexos: 4"));
+    TEST_ASSERT_EQUAL_INT(1, arquivo_contem(CAMINHO_TXT, "regs 5.00 -> Numero de componentes fortemente conexos: 4; unico vertice: 4; multiplos vertices: 0"));
     TEST_ASSERT_EQUAL_INT(1, arquivo_contem(CAMINHO_TXT, "exp 5.00 -> 2 aresta(s) expandida(s)"));
 
     TEST_ASSERT_EQUAL_INT(1, arquivo_contem(CAMINHO_SVG, "id=\"vias\""));

@@ -267,6 +267,8 @@ static int processar_comando_regs(const char *linha, Grafo grafo, FILE *saida, c
     double limite_velocidade;
     Componentes componentes;
     int quantidade;
+    int unico_vertice;
+    int multiplos_vertices;
     int sucesso;
 
     if (sscanf(linha, "regs %lf", &limite_velocidade) != 1) {
@@ -279,10 +281,19 @@ static int processar_comando_regs(const char *linha, Grafo grafo, FILE *saida, c
     }
 
     quantidade = obter_quantidade_componentes(componentes);
+    unico_vertice = obter_quantidade_componentes_unico_vertice(componentes);
+    multiplos_vertices = obter_quantidade_componentes_multiplos_vertices(componentes);
     sucesso = acrescentar_componentes_svg(caminho_svg, grafo, componentes);
     destruir_componentes(componentes);
 
-    return sucesso && fprintf(saida, "regs %.2f -> Numero de componentes conexos: %d\n", limite_velocidade, quantidade) >= 0;
+    return sucesso && fprintf(
+        saida,
+        "regs %.2f -> Numero de componentes fortemente conexos: %d; unico vertice: %d; multiplos vertices: %d\n",
+        limite_velocidade,
+        quantidade,
+        unico_vertice,
+        multiplos_vertices
+    ) >= 0;
 }
 
 static int processar_comando_exp(const char *linha, Grafo grafo, FILE *saida, const char *caminho_svg)

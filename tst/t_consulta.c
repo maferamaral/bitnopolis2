@@ -204,7 +204,7 @@ void test_deve_processar_regs_e_informar_componentes(void)
     escrever_qry("regs 5\n");
 
     TEST_ASSERT_EQUAL_INT(1, processar_arquivo_consulta(CAMINHO_QRY_TESTE, cidade, grafo, CAMINHO_TXT_TESTE, CAMINHO_SVG_TESTE));
-    TEST_ASSERT_EQUAL_INT(1, arquivo_txt_contem("regs 5.00 -> Numero de componentes conexos: 4"));
+    TEST_ASSERT_EQUAL_INT(1, arquivo_txt_contem("regs 5.00 -> Numero de componentes fortemente conexos: 4; unico vertice: 4; multiplos vertices: 0"));
     TEST_ASSERT_EQUAL_INT(1, arquivo_svg_contem("id=\"componentes_regs\""));
     TEST_ASSERT_EQUAL_INT(1, arquivo_svg_contem("id=\"componente_0\""));
     TEST_ASSERT_EQUAL_INT(1, arquivo_svg_contem("id=\"componente_3\""));

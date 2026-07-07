@@ -1,5 +1,6 @@
 t2/*
 out/*
+ted
 src/*.o
 src/ted
 tst/*_run
