@@ -1,4 +1,4 @@
-PROJ_NAME = ted
+PROJ_NAME = src/ted
 
 CC = gcc
 CFLAGS = -Wall -Wextra -pedantic -ggdb -O0 -std=c99 -fstack-protector-all -Werror=implicit-function-declaration
@@ -26,7 +26,9 @@ OBJS = \
 	$(SRC_DIR)/componentes.o \
 	$(SRC_DIR)/arvore_minima.o
 
-all: $(PROJ_NAME)
+all: ted
+
+ted: $(PROJ_NAME)
 
 $(PROJ_NAME): $(OBJS)
 	$(CC) $(LDFLAGS) $(OBJS) -o $(PROJ_NAME)
@@ -38,4 +40,4 @@ clean:
 	rm -f $(SRC_DIR)/*.o
 	rm -f $(PROJ_NAME)
 
-.PHONY: all clean
+.PHONY: all ted clean

@@ -11,8 +11,8 @@
 #define CAMINHO_GEO DIR_ENTRADA "/cidade.geo"
 #define CAMINHO_VIA DIR_ENTRADA "/cidade.via"
 #define CAMINHO_QRY DIR_ENTRADA "/cidade.qry"
-#define CAMINHO_TXT DIR_SAIDA "/cidade.txt"
-#define CAMINHO_SVG DIR_SAIDA "/cidade.svg"
+#define CAMINHO_TXT DIR_SAIDA "/cidade-cidade.txt"
+#define CAMINHO_SVG DIR_SAIDA "/cidade-cidade.svg"
 
 static void limpar_arquivos_integracao(void)
 {
@@ -94,7 +94,7 @@ void test_deve_executar_programa_com_geo_via_qry(void)
 
     TEST_ASSERT_EQUAL_INT(
         0,
-        system("./ted -e " DIR_ENTRADA " -f cidade.geo -v cidade.via -q cidade.qry -o " DIR_SAIDA)
+        system("./src/ted -e " DIR_ENTRADA " -f cidade.geo -v cidade.via -q cidade.qry -o " DIR_SAIDA)
     );
 
     TEST_ASSERT_EQUAL_INT(1, arquivo_contem(CAMINHO_TXT, "@o? R0 cep1 L 0.00 -> (0.00, 0.00)"));

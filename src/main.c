@@ -106,6 +106,42 @@ static char *montar_caminho_saida(const char *diretorio, const char *base, const
     return caminho;
 }
 
+static char *montar_base_saida(const char *arquivo_geo, const char *arquivo_qry)
+{
+    char *base_geo;
+    char *base_qry;
+    char *base_saida;
+    size_t tamanho;
+
+    base_geo = obter_nome_base(arquivo_geo);
+    if (base_geo == NULL) {
+        return NULL;
+    }
+
+    if (arquivo_qry == NULL) {
+        return base_geo;
+    }
+
+    base_qry = obter_nome_base(arquivo_qry);
+    if (base_qry == NULL) {
+        free(base_geo);
+        return NULL;
+    }
+
+    tamanho = strlen(base_geo) + strlen(base_qry) + 2;
+    base_saida = malloc(tamanho);
+    if (base_saida == NULL) {
+        free(base_geo);
+        free(base_qry);
+        return NULL;
+    }
+
+    snprintf(base_saida, tamanho, "%s-%s", base_geo, base_qry);
+    free(base_geo);
+    free(base_qry);
+    return base_saida;
+}
+
 static void liberar_recursos(
     Argumentos argumentos,
     Cidade cidade,
@@ -155,7 +191,7 @@ int main(int argc, char **argv)
 
     diretorio_entrada = obter_diretorio_entrada(argumentos);
     caminho_geo = montar_caminho_entrada(diretorio_entrada, obter_arquivo_geo(argumentos));
-    base_saida = obter_nome_base(obter_arquivo_geo(argumentos));
+    base_saida = montar_base_saida(obter_arquivo_geo(argumentos), obter_arquivo_consulta(argumentos));
     caminho_txt = montar_caminho_saida(obter_diretorio_saida(argumentos), base_saida, "txt");
     caminho_svg = montar_caminho_saida(obter_diretorio_saida(argumentos), base_saida, "svg");
 
